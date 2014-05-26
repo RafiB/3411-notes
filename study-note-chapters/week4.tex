@@ -1,0 +1,299 @@
+\part{Week 4}
+\chapter{Games}
+
+\section{Why Games?}
+Games have "unpredictable" opponents $\Rightarrow$ solution is a strategy.
+
+Time limits $\Rightarrow$ must rely on approximation (tradeoff between speed
+and accuracy).
+
+Games have been a key driver of new techniques in CompSci and AI.
+
+\section{Types of Games}
+\subsection{Discrete Games}
+Fully observable, deterministic (chess, checkers, go, othello)
+
+Fully observable, stochastic (backgammon, monopoly)
+
+Partially observable (bridge, poker, scrabble)
+
+\subsection{Continuous, embodied games}
+Robocup soccer, pool
+
+\section{Key Ideas}
+\begin{itemize}
+    \item Computer considers possible lines of play
+    \item Algorithm for perfect play
+    \item Finite horizon, approximate evaluation
+    \item Machine learning to improve evaluation accuracy
+    \item Pruning to allow deeper search
+\end{itemize}
+
+
+\subsection{Minimax}
+Minimax provides perfect play for deterministic, perfect-information games. The
+idea is to choose the position with the highest minimax value = best achievable
+payoff against best play.
+
+\subsubsection{Minimax Algorithm}
+\texttt{function $minimax(node, depth)$\\
+\indent if $node$ is a terminal node or $depth$ = 0\\
+\indent\indent return heuristic value of $node$\\
+\indent if we are to play at $node$\\
+\indent\indent let $\alpha = -\infty$\\
+\indent\indent foreach $child$ of $node$\\
+\indent\indent\indent let $\alpha = max(\alpha, minimax(child, depth-1))$\\
+\indent\indent return $\alpha$\\
+\indent else // opponent is to play at node\\
+\indent\indent let $\beta = \infty$\\
+\indent\indent foreach $child$ of $node$\\
+\indent\indent\indent let $\beta = min(\beta, minimax(child, depth-1))$\\
+\indent\indent return $\beta$
+}
+
+This assumes that all nodes are evaluated with respect to a fixed player (e.g.
+White in Chess).
+
+\paragraph{Negamax formulation of Minimax}
+Minimax can be simplified to an algorithm called Negamax if we assume that each
+node is evaluated with respect to the player whose turn it is to move.\\\\
+\texttt{function $negamax(node, depth)$\\
+\indent if $node$ is a terminal node or $depth$ = 0\\
+\indent\indent return heuristic value of $node$ from perspective of player
+whose turn it is\\
+\indent let $\alpha = -\infty$\\
+\indent foreach $child$ of $node$\\
+\indent\indent let $\alpha = max(\alpha, -negamax(child, depth-1))$\\
+\indent return $\alpha$\\
+}
+
+\paragraph{Properties of Minimax}
+Complete?\\
+Optimal?\\
+Time complexity?\\
+Space complexity?
+
+\subsection{Reducing the Search Effort}
+For chess, $b \approx 35, m \approx 100$ for "reasonable" games $\Rightarrow$
+exact solution is completely infeasible.
+
+There are two ways to make the search feasible:
+\begin{enumerate}
+    \item don't search to final position; use heuristic evaluation at the
+    leaves
+    \item $\alpha-\beta$ pruning
+\end{enumerate}
+
+\subsubsection{Heuristic Evaluation for Chess}
+Material: Queen = 9, Rook = 5, Knight = Bishop = 3, Pawn=1
+
+Position: some (fractional) score for a particular piece on a particular square
+
+Interaction: some (fractional) score for one piece attacking another piece,
+etc.
+
+The value of individual features can be determined by reinforcement learning.
+
+\subsubsection{Motivation for Pruning}
+Once we have seen one reply scary enough to convince us the move is really bad,
+we can abandon this move and search elsewhere.
+
+\subsubsection{$\alpha-\beta$ search algorithm}
+\texttt{function $alphabeta(node, depth, \alpha, \beta, ourTurn)$\\
+\indent if $node$ is a terminal node or $depth$ = 0\\
+\indent\indent return heuristic value of $node$\\
+\indent if ourTurn // we are to play at $node$\\
+\indent\indent foreach $child$ of $node$\\
+\indent\indent\indent let $\alpha = max(\alpha, alphabeta(child, depth-1,
+\alpha, \beta, FALSE))$\\
+\indent\indent\indent if $\alpha \geq \beta$\\
+\indent\indent\indent\indent return $\alpha$ // $\beta$ is pruned off\\
+\indent\indent return $\alpha$\\
+\indent else // opponent is to play at $node$\\
+\indent\indent foreach $child$ of $node$\\
+\indent\indent\indent let $\beta = min(\beta, alphabeta(child, depth-1, \alpha,
+\beta, TRUE))$\\
+\indent\indent\indent if $\beta \geq \alpha$ // $\alpha$ is pruned off\\
+\indent\indent\indent\indent return $\beta$\\
+\indent\indent return $\beta$\\
+$alphabeta(origin, depth, -\infty, \infty, TRUE)$
+}
+
+\paragraph{Negamax formulation of $\alpha-\beta$ search\\}
+\texttt{\\
+function $minimax(node, depth)$\\
+\indent return $alphabeta(node, depth, -\infty, \infty)$\\
+\\
+function $alphabeta(node, depth, \alpha, \beta)$\\
+\indent if $node$ is terminal or $depth = 0$\\
+\indent\indent return heuristic value of $node$\\
+\indent\indent // from perspective of player whose turn it is to move\\
+\indent foreach $child$ of $node$\\
+\indent\indent let $\alpha = max(\alpha, -alphabeta(child, depth-1, -\beta,
+-\alpha))$\\
+\indent\indent if $\alpha \geq \beta$\\
+\indent\indent\indent return $\alpha$\\
+\indent return $\alpha$
+}
+
+\paragraph{Why is it called $\alpha-\beta$?}
+$\alpha$ is the best value for us found so far, off the current path\\
+$\beta$ is the best value for opponent found so far, off the current path
+
+If we find a move whose value exceeds $\alpha$, pass this new value up the
+tree.
+
+If the current node value exceeds $\beta$, it is "too good to be true", so we
+"prune off" the remaining children.
+
+TODO CAN SOMEONE EXPLAIN THIS? how is it "too good to be true"? what does that mean?
+lecture slides 6 Games, page 28
+
+\paragraph{Properties of $\alpha-\beta$}
+$\alpha-\beta$ pruning is guaranteed to give the same result as minimax, but
+speeds up the computation substantially.
+
+Good move ordering improves effectiveness of pruning.
+
+With perfect ordering, time complexity $= O(b^{m/2})$. To prove that a bad move
+is bad, we only need to consider one good reply, but to prove that a good move
+is good, we need to consider all replies.
+
+This means that $\alpha-\beta$ can search twice as deep as plain minimax. An
+increase in search depth from 6 to 12 could change a very week player into a
+quite strong one.
+
+\section{Chess}
+Deep Blue defeated world champion Gary Kasparov in a six-game match in 1997.
+
+Traditionally, computers played well in the opening (using a database) and in
+the endgame (by deep search DEFINITION FOR DEEP SEARCH PLZ) but humans could
+beat them in the middle game by "opening up" the board to increase the
+branching factor. Kasparov tried this, but Deep Blue was so fast that it was
+still able to in.
+
+Some experts believe that Kasparov should have been able to defeat Deep Blue,
+but today chess programs stronger than Deep Blue are running on standard PCs
+(these programs rely on quiescent search, transposition tables, and pruning
+heuristics) and could definitely beat the strongest humans.
+
+\section{Checkers}
+Chinook failed to defeat human world champion Marion Tinsely prior to his death
+in 1994, but has beaten all subsequent human champions. Chinook used an endgame
+database defining perfect play for ass positions involving 8 or fewer pieces on
+the board - a total of 443,748,401,247 positions. This database has since been
+expanded to include all positions with 10 or fewer pieces (38 trillion
+positions).
+
+In 2007, Jonathan Shaeffer released a new version of Chinook and published a
+roff that it will never lose, His proof method fills out the game tree
+incrementally, ignoring branches which are likely to be pruned. After many
+moths of computation, it eventually converges to a skeleton of the real
+(pruned) tree which is comprehensive enough to complete the proof.
+
+\section{Go}
+The branching factor for Go is greater than 300, and static board evaluation is
+difficult.
+
+Traditional Go programs broke the board into regions and used pattern knowledge
+to explore each region.
+
+Since 2006, new "Monte Carlo" players have developed using UCB search (TODO WHAT
+EVEN IS THIS?). A tree is built up stochastically. After a small number of
+moves, the rest of the game is played out randomly, using fast pattern matching
+to give prefence to "urgent" moves. Results of random playouts are used to
+update statistics on early positions.
+
+Computers are now competitive with humans on 9x9 boards, but humans still have
+the advantage on 19x19 boards.
+
+\section{Stochastic Games}
+In stochastic games, chance is introduced by dice, card-shuffling, etc.
+
+Expectimax is an adaptation of Minimax which also handles chance nodes:\\
+\indent if $node$ is a chance node\\
+\indent\indent return average of values of successor nodes
+
+Adaptations of $\alpha-\beta$ pruning are possible, provided the evaluation is
+bounded.
+
+\section{Partially Observable Games}
+Card games are partially observable because some of the opponent's cards are
+unknown.
+
+This makes the problem very difficult, because some information is known to one
+player but not the other.
+
+Typically, we can calculate a probability for each possible deal.
+
+The idea is therefore to compute the minimax value of each action in each deal,
+then choose the action with the highest expected value over all deals.
+
+GIB, the current best bridge program, approximates this idea by
+\begin{enumerate}
+    \item generating 100 deals consistent with bidding informatio
+    \item picking the action that wins most tricks on average
+\end{enumerate}
+
+\chapter{Motion Planning}
+\section{Motion Planning Approaches}
+\subsection{Unknown Environments (on-board sensors only)}
+\subsubsection{Occupancy Grid}
+Divide environment into a Cartesian grid. For each square in the grid, maintain
+an estimate of the probability of an obstacle in that square.
+
+\subsubsection{Potential Field}
+Treat robot's configuration as a point in a potential field that combines
+attraction to the goal, and repulsion from objects. Very rapid computation, but
+can get stuck in local optima, thus failing to find a path.
+
+\subsubsection{Vector Field Histogram}
+Uses a continuously updated Cartesian histogram grid and a Polar histogram
+based on the current position/orientation of the robot. Candidate valleys are
+generated (contiguous sectors with low obstacle density). Candidate valleys are
+then seleced based on proximity to target direction.
+
+\subsection{Known Environments (overhead cameras)}
+\subsubsection{Delaunay Triangulation}
+Applicable in situations where the environment is well mapped by overhead
+cameras (museums, shopping centres, robocup soccer field)
+
+Add line segments between the closest points of obstacles, and sort them
+according to length in ascending order.
+
+Do not add a segment that crosses an existing segment.
+
+Prune arcs that are too small for the robot to traverse
+
+A* Search can then be applied on the resulting graph.
+
+\subsubsection{Parameterized Cubic Splines}
+Assume that each path segment is of the form\\
+$P(t) = \binom{P_{x}(t)}{P_{y}(t)} = \binom{a_x}{a_y}t^3 + \binom{b_x}{b_y}t^2
++ \binom{c_x}{c_y}t + \binom{d_x}{d_y}$
+
+Solve these equations for a specified position and velocity at the beginning
+($t = 0$) and the end ($t = s$) of the segment. Traditional method was to set
+$s = 1$. We instead try to minimise $s$ (total time for segment) while
+satisfying kinematic contraints:
+
+{\centering $|\frac{P\prime\prime(t)}{A} + \frac{P\prime(t)}{V}|^2 \leq 1$, for $0 \leq t
+\leq s$,
+
+}
+
+where A and V are the maximal acceleration and velocity of the robot.
+
+\subsection{Minimizing Time instead of Distance}
+For the problem of a soccer robot getting to the ball, or a wheeled robot
+navigating a maze, the path with the shortest distance might not be the path
+that is quickest to traverse. By speeding up and slowing down, the robot could
+traverse a path with long straight stretches faster than a shorter path with
+lots of twists and turns.
+
+This requires more work than just path-finding:
+\begin{enumerate}
+    \item Delaunay Triangulation
+    \item A* Search, using paths composed of Parameteric Cubic Splines
+    \item Smooth entire curve with Waypoint Tuning by Gradient Descent
+\end{enumerate}

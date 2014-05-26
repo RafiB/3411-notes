@@ -1,0 +1,393 @@
+\part{Week 2}
+\chapter{Agent Types}
+\section{Reactive Agent}
+Reactive agents are quite simple; steps are repeated in a very simple
+procedure:
+\begin{enumerate}
+    \item Perceive environment
+    \item Act
+\end{enumerate}
+Reactive agents choose the next action to perform based only on what the
+currently perceive. The action is based on a simple set of rules (called a
+\textit{policy}) which are easy to apply.
+
+Reactive agents are sometimes called "simple reflex agents", despite the fact
+that they can actually perform fairly sophisticated tasks (for example,
+simulated hockey can be performed by a reactive agent.)
+\subsection{Limitations of Reactive Agents}
+A reactive agent only knows about what it currently perceives and in many
+cases, you need to remember previous percepts to make intelligent decisions.
+Reactive agents may also perform the same action over and over, if what they
+perceive never changes.
+
+\section{Model-Based Agent}
+A model-based agent is slightly more complicated than a reactive agent. A
+model-based agent includes a world model, which represents the important parts
+of the environment. The agent adjusts its world model based on its percepts,
+and the agent's actions are informed by both the world model and its current
+percept.
+\subsection{Advantages of Model-Based Agents}
+A model-based agent can remember past percepts.
+\subsection{Limitations of Model-Based Agents}
+Sometimes we need to plan several steps into the future. Hence, a model-based
+agent will perform badly in the following cases:
+\begin{description}
+    \item[Searching several moves ahead] Chess, Rubik's Cube
+    \item[Complex tasks with many steps] Cooking a meal, assembling a watch
+    \item[Logical reasoning to achieve a goal] travel to New York
+\end{description}
+
+\section{Planning Agent}
+A planning agent adds a planning step to a model-based agent. The world model
+can be a transition table, a dynamical system, a parametric model, a knowledge
+base, etc.
+
+The planning step can be a state-based search, a simulation, logical inference,
+or a set of goals. The action of the planning agent is informed by the planning
+step.
+
+A planning agent has the capacity to reason about future states. However,
+sometimes agents appear to be planning but are really just reactive, applying
+rules which are hard-coded or learned. These agents appear intelligent, but are
+not flexible in adapting to new situations.
+
+\section{Learning Agent}
+A learning agent adds a Learning step to each part of the planning agent.
+Statistical learning is applied to Perception, reinforcement learinng is
+applied to the Action, Bayesian learning is applied to the world model, and
+inference learning is applied to the planning step.
+
+Learning is a set of techniques for improving the existing modules in the
+planning agent, rather than being a different module in the agent.
+
+Learning is necessary because it may be difficult for a human to design all
+aspects of a system by hand, and because the agent may have to adapt to new
+situations without being re-programmed by a human.
+
+Application of learned behaviour is distinct from the learning process. For
+example, the policy for a simulated hockey player took sevel days of
+computation to derive, but after that process, can be applied in real-time.
+
+\chapter{Solving Problems by Searching}
+\section{Motivation}
+Reactive and model-based agents choose their actions based on what they
+currently perceive, or what the have perceived in the recent past.
+
+A planning agent can use search techniques to plan several steps ahead in order
+to achieve its goal(s).
+
+There are two classes of search strategies:
+\begin{enumerate}
+    \item Uninformed search strategies can only distinguish goal states from
+    non-goal states
+    \item Informed search strategies use heuristics to try to get closer to the
+    goal
+\end{enumerate}
+
+\section{Romania Example}
+Now, let's apply the search strategy to the example covered in lectures; the
+map of Romania. We are touring Romania, and we are currently in Arad. Our
+flight leaves tomorrow from Bucharest.
+\begin{description}
+    \item[Formulate goal] be in Bucharest on time.
+    \item[Specify task]\hfill
+        \begin{itemize}
+            \item states: various cities
+            \item operators or actions (transitions between states): drive between cities
+        \end{itemize}
+    \item[Find solution (action sequences)] sequence of cities to drive through
+    \item[Execute] drive through all the cities given by the solution.
+\end{description}
+
+\subsection{Single-State Task Specification}
+A task is specified by states and actions.
+\begin{description}
+    \item[initial state] At Arad
+    \item[state space] other cities
+    \item[actions or operators (or successor function S($x$))] Arad
+    $\rightarrow$ Zerind
+    \item[goal test] check if a state is a goal state. Can be explicit ("at
+    Bucharest") or implicit ($NoDirt$($x$))
+    \item[path cost] sum of distances from Arad to Bucharest
+    \item[total cost] = search cost + path cost = offline cost + online cost
+\end{description}
+A \textit{solution} is a state-action sequence (initial to goal state)
+
+\subsection{Choosing states and actions}
+The real world is complex; the state space must be abstracted for
+problem-solving.
+
+An abstract state is a set of real states.
+
+An abstract action is a complex combination of real actions. For example, "Arad
+$\rightarrow$ Zerind" describes a complex set of possible routes, detours, rest stops,
+etc.
+For guaranteed realisability, any real state must get to some real state (for
+example, Arad must get to Zerind).
+
+An abstract solution is a set of real paths that are solutions in the real
+world.
+
+\subsection{Problem types}
+Toy problems have a concise, exact description
+
+Real-world problems don't have a single agreed description.
+
+\subsection{Applying task specifications}
+\subsubsection{The 8-Puzzle}
+\begin{description}
+    \item[states] integer locations of tiles (ignore intermediate positions)
+    \item[operators] move blank left, right, up, down (ignore unjamming, etc.)
+    \item[goal test] = goal state (given)
+    \item[path cost] 1 per move
+\end{description}
+
+\subsubsection{Rubik's Cube}
+TODO NOTHING HERE. Any takers?
+
+\section{Path Search Algorithms}
+A \textit{search} finds state-action sequences that lead to desirable states.
+Search is a function with prototype\\
+\indent \texttt{solutionType $search(task)$}
+
+The basic idea is that a search is an offline, simulated exploration of the
+state space by generating successors of already-explored states (by "expanding"
+them).
+
+To generate an action sequence:
+\begin{itemize}
+    \item Start with the initial state
+    \item Test if it is a goal state
+    \item Expand one of the states
+    \item If there are multiple possibilities, make a choice
+    \item Procedure: choosing, testing, and expanding until a solution is found
+    or there are no more states to expand
+\end{itemize}
+
+Generating an action sequence can be thought of as building a \textit{search
+tree}. A search tree is superimposed over the state space. The root of the tree
+is the initial state, and the leaves of the tree are states that are not
+expanded, or that generated no new nodes. The state space is not the same as
+the search tree; in the Romania example there are only 20 states (20 cities)
+but there are infinitely many paths.
+
+A node data structure is composed of five components:
+\begin{enumerate}
+    \item Corresponding state
+    \item Parent node: the node which generated the current node
+    \item Operator that was applied to generate the current node
+    \item Depth: the number of nodes from the root to the current node
+    \item Path cost
+\end{enumerate}
+
+Nodes are distinct from states: a state is [a representation of] a physical
+configuration. A node is a data structure that makes up part of a search tree.
+States do not have parents, children, depth, or path cost.\\
+Note: multiple nodes can contain the same state.
+
+\subsection{Data Structures for Search Trees}
+The \textit{frontier} is the collection of nodes that have not yet been
+expanded. It can be implemented as a priority queue with the following
+operations:
+\begin{description}
+    \item[Make-Queue(Items)] creates queue with given items
+    \item[Boolean Empty(Queue)] returns TRUE if no items in queue
+    \item[Remove-Front(Queue)] removes the item at the front of the queue and
+    returns it
+    \item[Queueing-Fn(Items, Queue)] inserts new items into the queue.
+\end{description}
+
+\subsection{Search Strategies}
+A strategy is defined by picking the order of node expansion. Strategies are
+evaluated along the following dimensions:
+\begin{description}
+    \item[completeness] does it always find a solution if one exists?
+    \item[time complexity] number of nodes generated/expanded
+    \item[space complexity] maximum number of nodes in memory
+    \item[optimality] does it always find a least-cost solution?
+\end{description}
+
+Time and space complexity are measured in terms of
+\begin{description}
+    \item[b] maximum branching factor of the search tree
+    \item[d] depth of the least-cost solution
+    \item[m] maximum depth of the state space (may be $\infty$)
+\end{description}
+
+\subsection{Approaches to comparing algorithms}
+\subsubsection{Benchmarking}
+Run two algorithms on a computer and measure speed. This is not a great way of
+comparing algorithms, as it depends on implementation, compiler, computer,
+data, network, \ldots
+\subsubsection{Analysis of algorithms}
+We tend to use Big-O notation to describe algorithms.
+T($n$) $\in$ O($f(n)$) means $\exists k > 0 \exists n_0 : \forall n > n_0 $T($n$) $\leq kf(n)$
+Here, $n$ is the input size and T($n$) is the total number of steps in the
+algorithm. In words, this means that $f(n)$ describes the limiting behaviour of
+T($n$) when n tends towards some value, or infinity. For more, see
+\href{http://en.wikipedia.org/wiki/Big_O_notation}{Wikipedia: Big O notation}.
+
+Note: alternatives to T(n) $\in$ O($f(n)$) are T(n) = O($f(n)$) and T(n) is
+O($f(n)$).
+
+Big O notation:
+\begin{itemize}
+    \item is independent of the implementation, compiler, etc.
+    \item provides asymptotic analysis; for large $n$, O($n$) is better than O($n^2$)
+    \item abstracts over contant factors. i.e. T($100n + 1000$) is better than
+    T($n^2 + 1$) only for $n > 110$.
+    \item is a good compromise between precision and ease of analysis.
+\end{itemize}
+
+\subsection{Uninformed Search Strategies}
+Uninformed (or "blind") search strategies use only the information available in
+the problem definition (can only distinguish a goal from a non-goal state).
+Examples include
+\begin{itemize}
+    \item Breadth-first search
+    \item Uniform-cost search
+    \item Depth-first search
+    \item Depth-limited search
+    \item Iterative Deepening search
+\end{itemize}
+Strategies are distinguished by the order in which nodes are expanded.
+
+\subsubsection{Breadth-first search}
+All nodes are expanded at a given depth in the tree before any nodes at the
+next level are expanded.
+
+Expand root first, then all nodes generated by the root, then all nodes
+generated by those nodes, \ldots
+
+Expand shallowest unexpanded node
+
+Implementation: put newly generated nodes at the end of the queue
+
+Finds the shallowest goal first.
+
+Breadth-first search is complete (if $b$ is finite the shallowest goal is at
+fixed depth $d$ and will be found before any deeper nodes are expanded).
+
+Space complexity: $b + b^2 + b^3 + \ldots + b^d + (b^{d+1} - b) = O(b^{d+1})$
+
+Time complexity: $O(b^{d+1})$
+
+Is optimal if all actions have the same cost.
+
+Space is the biggest problem with BFS; it grows exponentially with depth.
+
+\subsubsection{Uniform-Cost Search}
+Expand root node first, then expand least-cost unexpanded node first.
+
+Implementation: enqueue nodes in order of increasing path cost.
+
+Reduces to BFS when all actions have same cost.
+
+Finds the cheapest goal provided the path cost is monotonically increasing
+along each path (i.e. no negative-cost paths)
+
+Uniform-cost search is complete if $b$ is finite and step cost $\geq \epsilon$
+with $\epsilon > 0$
+
+Time complexity: $O(b^{\lceil C*/\epsilon\rceil})$ where $C*$ = cost of optimal
+solution, and assume that every action costs at least $\epsilon$
+
+Space complexity: $O(b^{\lceil C*/\epsilon\rceil})$ ($b^{\lceil C*/\epsilon\rceil} = b^d$ if all step costs are equal)
+
+Is optimal.
+
+\subsubsection{Depth-First Search}
+Expands one of the nodes at the deepest level of the tree
+
+Implementation: insert newly generated nodes at the front of the queue.
+Can be alternatively implemented by recursive function calls.
+
+Not complete: fails in infinite-depth spaces, spaces with loops. Can be
+modified to avoid repeated states along path $\Longrightarrow$ complete in finite
+spaces.
+
+Time complexity: $O(b^m)$ (terrible if m is much larger than $d$ but if
+solutions are dense, may be much faster than BFS)
+
+Space complexity: $O(bm)$ (linear space!)
+
+Not optimal, can find suboptimal solutions first.
+
+\subsubsection{Depth-Limited Search}
+Expands nodes like DFS but imposes a cutoff on the maximum depth of path.
+
+Complete? Yes (no infinite loops)
+
+Time complexity: $1 + b^1 + b^2 + \ldots + b^{l-1} + b^l = O(b^l)$ where l is the depth limit
+
+Space complexity: $O(bl)$ linear space similar to DFS
+
+Not optimal, like DFS.
+
+Also comes with the problem of picking a good limit.
+
+\subsubsection{Iterative Deepening Search}
+Tries to combine the memory benefits of DFS and optimality/completeness of BFS
+by doing a series of depth-limited searches to depth 1, 2, 3, \ldots
+
+Early states will be expanded multiple times, but that might not matter too
+much because most of the nodes are near the leaves.
+
+Complete.
+
+Time complexity: nodes at the bottom are expanded once, nodes at the next level
+are expanded twice, etc. $(d+1)b^0 + db^1 + (d-1)b^2 + ... + 2b^{d-1} + 1b^d =
+O(b^d)$. For example, given $b = 10$, $d = 5$:\\
+\indent depth-limited: $1 + 10 + 100 + 1000 + 10000 + 100000 = 111111$\\
+\indent iterative-deepening: $6 + 50 + 400 + 3000 + 20000 + 100000 = 123456$\\
+only about $11\%$ more nodes (for $b = 10$).
+
+Space complexity: $O(bd)$
+
+Is optimal if step costs are identical.
+
+\subsubsection{Bidirectional Search}
+The idea of bidirectional search is to search both forward from the initial
+state and backward from the goal state, and stop when the two searches meet in
+the middle.
+
+We need an efficient way to check if a new node already exists in the other
+half of the search. The complexity analysis assumes that this can be done in
+constant time, using a hash table.
+
+Assuming branch factor $b$ in both directions and that there is a solution at
+depth $d$. Then bidirectional search finds a solution in $O(2b^{d/2}) =
+O(b^{d/2})$ time steps.
+
+However, there are problems with bidirectional search. Searching backwards
+means generating predecessors from the goal, which may be difficult. There can
+be several goals (e.g. checkmate positions in Chess). Space complexity is
+$O(b^{d/2})$ because the nodes of at least one half must be kept in memory.
+
+\subsubsection{Complexities of Uninformed Search Strategies}
+
+\begin{tabular}{| l | p{1.3cm} | p{2.8cm} | p{1cm} | p{2.8cm} | p{2cm} |}
+\hline
+Search & BFS & Uniform-Cost Search & DFS & Depth-Limited Search & Iterative Deepening\\ \hline
+Time complexity & $O(b^{d+1})$ & $O(b^{\lceil C*/\epsilon\rceil})$ & $O(b^m)$ & $O(b^l)$ &
+$O(b^d)$\\ \hline
+Space complexity & $O(b^{d+1})$ & $O(b^{\lceil C*/\epsilon\rceil})$ & $O(bm)$ &
+$O(bl)$ & $O(bd)$\\ \hline
+Complete? & Yes\footnotemark & Yes\footnotemark & No & No &
+Yes\footnotemark[1]\\ \hline
+Optimal? & Yes\footnotemark
+& Yes & No & No & Yes\footnotemark[3]\\
+\hline
+\end{tabular}
+\footnotetext[1]{complete if b is finite}
+\footnotetext[2]{complete if b is finite and step costs $\leq\epsilon$ with $\epsilon > 0$}
+\footnotetext[3]{optimal if actions all have the same cost}
+
+\subsection{Informed Search Strategies}
+Informed (or "heuristic") search strategies use task-specific knowledge.
+An example of task-specific knowledge: distance between two cities on the map
+of Romania.
+Informed search is more efficient than Uninformed search.
+Uninformed search systematically generates new states and tests them against
+the goal - informed search attempts to filter input, or order inputs in a way
+that the most likely candidate is tested before others.

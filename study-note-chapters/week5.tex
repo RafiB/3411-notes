@@ -1,0 +1,259 @@
+\part{Week 5}
+\chapter{Constraint Satisfaction Problems}
+
+\section{Constraint Satisfaction Problems (CSPs)}
+Constraint Satisfaction Problems are defined by a set of variables $X_i$, each
+with a domain $D_i$ of possible values, and a set of contraints $C$.
+
+The aim is to find an assignment of the variables $X_i$ from the domains $D_i$
+in such a way that none of the constraints $C$ are violated.
+
+Path Search Problems and CSPs are significantly different. It is difficult to
+know the final state for a CSP, but how to get there is easy. Knowing the final
+state for a Path Search is easy, but it's difficult to get there.
+
+\subsection{Example: Map Colouring}
+Variables: WA, NT, Q, NSW, V, SA, T\\
+Domains: $D_i = {red, green, blue}$\\
+Constraints: adjacent regions must have different colours
+
+The solution is an assignment that satisfies all of the contraints, e.g. {WA =
+red, NT = green, Q = red, NSW = green, V = red, SA = blue, T = green}
+TODO add images
+
+\subsection{Example: n-Queens Puzzle}
+Put $n$ queens on an $n$-by-$n$ chess board so that no two queens are attacking
+each other.
+
+Describing the puzzle as a CSP:\\
+First, simplify the problem: 4-Queens puzzle.\\
+Assume one queen in each column. Which row does each one go in?\\
+Variables: $Q_1, Q_2, Q_3, Q_4$\\
+Domains: $D_i = {1, 2, 3, 4}$\\
+Constraints:\\
+$Q_i \neq Q_j$ (cannot be in the same row)
+$|Q_i - Q_j| \neq |i - j|$ (or same diagonal)
+
+\subsection{Example: Cryptarithmetic}
+\begin{tabular}{| l | l | l | l | l |}
+& S & E & N & D\\
++ & M & O & R & E\\
+\hline
+M & O & N & E & Y
+\end{tabular}
+
+Variables: D E M N O R S Y\\
+Domains: ${0, 1, 2, 3, 4, 5, 6, 7, 8, 9}$\\
+Constraints: $M \neq 0, S \neq 0$ (unary contraints)\\
+\indent $ Y = D + E$ or $Y = D + E - 10$, etc.\\
+\indent $D \neq E, D \neq M, D \neq N$, etc.
+
+\subsubsection{Cryptarithmetic with Hidden Variables}
+We can add hidden variables to simplify the constraints.
+
+\begin{tabular}{| l | l | l | l |}
+& T & W & O\\
++ & T & W & O\\
+\hline
+F & O & U & R
+\end{tabular}
+
+Variables: F T U W R O $X_1$ $X_2$ $X_3$\\
+Domains: {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}\\
+Constraints: F, T, U, W, R, O are all different\\
+\indent O + O = R + 10$X_i$, etc.
+
+\subsection{Example: Sudoku}
+Come on. You know Sudoku.
+
+\subsection{Real-World CSPs}
+\begin{itemize}
+    \item Assignment problems (e.g. who teaches which class?)
+    \item Timetabling problems (e.g. which class is offered when and where?)
+    \item Hardware configuration
+    \item Transport scheduling
+    \item Factory scheduling
+\end{itemize}
+
+\subsection{Types of Constraints for CSPs}
+\begin{description}
+    \item[Unary constraints] involve a single variable, e.g. $M \neq 0$
+    \item[Binary constraints] involve pairs of variables, e.g. $SA \neq WA$
+    \item[Higher-order constraints] involve 3 or more variables, e.g. $Y = D +
+    E$ or $Y = D + E - 10$
+    \item[Inequality constraints] on continuous variables, e.g. $EndJob_1 + 5
+    \leq StartJob_3$
+    \item[Soft constraints (preferences)] e.g. 11 am lecture better than 8am
+    lecture.
+\end{description}
+
+\subsection{Standard search formulation}
+Let's start with a simple but slow approach and then see how to improve it.\\
+States are defined by the values assigned so far.
+\begin{description}
+    \item[Initial state] the empty assignment
+    \item[Successor function] assign a value to an unassigned variable that
+    does not conflict with previously assigned variables $\Rightarrow$ fails if
+    no legal assignments (not fixable)
+    \item[Goal test] the current assignment is complete
+\end{description}
+
+This is the same for all CSPs. Every solution appears at depth $n$ with $n$
+variables $\Rightarrow$ use DFS.
+
+\subsection{Backtracking search}
+Variable assignments are commutative; [WA = red then NT = green] $\equiv$ [NT =
+green then WA = red]. Thus, we only need to consider assignments to a single
+variable at each node. DFS for CSPs with single-variable assignments is called
+Backtracking search, and is the basic algorithm for all CSPs. It can solve
+n-Queens for $n \approx 25$.
+
+There are a number of improvements to backtracking search.
+
+General-purpose heuristics can give huge gains in speed:
+\begin{enumerate}
+    \item which variable should be assigned next?
+    \item in what order should its valuen be tried?
+    \item can we detect inevitable failure early?
+\end{enumerate}
+
+\subsubsection{Minimum Remaining Values (MRV)}
+Choose the variable with the fewest legal values.
+
+\subsubsection{Degree Heuristic}
+The degree heuristic acts as a tie-breaker for MRV variables.
+
+The idea is to choose the variable with the most constraints of remaining
+values.
+
+\subsubsection{Least Constraining Value}
+Given a variable, choose the least constraining value - the one that rules out
+the fewest values in the remaining variables.
+
+Combining MRV, Degree Heuristic and Least Constraining Value makes 1000-Queens
+possible.
+
+\subsubsection{Forward Checking}
+The idea is to keep track of remaining legal values for unassigned variables
+and terminate search when any variable has no legal values.
+
+\paragraph{Constraint propagation}
+Forward checking propagates information from assigned to unassigned variables,
+but doesn't provide early detection for all failures. Constraint propagation
+repeatedly enforces constraints locally. Thus, while Forward Checking will
+terminate when a variable has no legal values, constraint propagation will
+terminate one step earlier, when (for example) two variables will be assigned
+the same value.
+
+\subsubsection{Arc Consistency}
+Simplest form of constraint propagation makes each arc consistent. $X
+\rightarrow Y$ is consistent if for every value $x$ of $X$ there is some
+allowed value $y$. If $X$ loses a value, neighbours of $X$ need to be
+rechecked. For some problems, it can speed up the search by a huge factor. For
+others, it may slow the search due to computational overheads.
+
+\subsection{Local Search}
+Local Search, or Iterative Improvement, is another class of algorithms for
+solving CSPs.
+
+These algorithms assign all variables randomly in the beginning (thus violating
+several constraints) and then change one variable at a time, attempting to
+reduce the number of violations at each step.
+
+\subsubsection{Hill-climbing by min-conflicts}
+Randomly select any variable and select values by the min-conflicts heuristic:
+choose the value that violates the fewest contraints.
+
+\paragraph{Phase transition in CSPs}
+Given a random initial state, hill climbing by min-conflicts can solve n-Queens
+in almost constant time for arbitrary $n$ (e.g. $n = 10,000,000)$ with high
+probability.
+
+In general, randomly-generated CSPs tend to be easy if there are very few or
+very many constraints. They become extra hard in a narrow range of the ratio
+
+{\centering R = $\frac{number of constraints}{number of variables}$
+
+}
+
+TODO insert image plz.
+
+\subsubsection{Flat regions and local optima}
+TODO insert image plz
+
+Sometimes we have to go sideways or backwards in order to make progress towards
+the actual solution.
+
+\subsection{Simulated Annealing}
+Simulated annealing is stochastic hill-climbing based on the difference between
+evaluation of previous state $h_0$ and new state $h_1$. If $h_1 < h_0$ then
+definitely make the change, otherwise make the change with probability
+$e^{-(h_1-h_0)/T}$ where $T$ is a "temperature" parameter.
+
+Simulated annealing reduces to ordinary hill climbing when $T = 0$, and becomes
+random when $T \rightarrow \infty$. Sometimes, we gradually decrease the
+temperature during the search (TODO WHY?).
+
+\chapter{Evolutionary Computation}
+We use principles of natural selection to evolve a computational mechanism
+which performs well at a specified task. Start with a randomly initialised
+population, and then repeat a cycle of
+
+\begin{enumerate}
+    \item evaluation
+    \item selection
+    \item reproduction + mutation
+\end{enumerate}
+
+We can use any computational paradigm, with appropriately defined reproduction
+and mutation operators.
+
+\section{Evolutionary Computation Paradigms}
+TODO this section is very empty - anything cool to add?
+
+\subsection{Bit String Operators (Genetic Algorithm)}
+We can use bitmask/bitstrings to represent gene values of an organism. The
+correlation goes something like this (source:
+\url{http://www.doc.ic.ac.uk/~sgc/teaching/pre2012/v231/lecture16.html})
+
+\begin{tabular}{| l | l | l |}
+    \hline
+    Genetics Terminology & Genetic Algorithm Terminology & Species Terminology\\ \hline
+                         & Population                    & Population\\ \hline
+    Chromosome           & Bit string                    & Organism\\ \hline
+    Gene                 & Bit (0 or 1)                  & \\ \hline
+                         & Selection                     & Survival of the fittest\\ \hline
+    Crossover            & Recombination                 & Inheritance\\ \hline
+    Mutation             & Mutation                      & \\ \hline
+\end{tabular}
+
+\subsubsection{Crossovers}
+A crossover, representing inheritance of genes, can be done in different ways.
+
+You can use a one-point crossover, where additions to the population are
+modified by taking parts of two 'parents'. We choose some arbitrary point in
+the string and the 'children' become products of the parent strings, like so:
+
+\underline{11101}001000 00001\underline{010101} become \underline{11101010101} and 00001001000
+
+You can also use a two-point crossover, like so:
+
+11\underline{0100}1000 \underline{00}00101\underline{0101} become 11001011000 and \underline{00101000101}
+
+\subsubsection{Point Mutation}
+Point mutation represents the mutation of a gene.
+
+111010\underline{0}1000 becomes 111010\underline{1}1000
+
+\subsection{S-expression trees (Genetic Programming)}
+S-expression trees can be used similarly. Recombination becomes swapping
+subtrees of the S-expressions, to give different results upon evaluation.
+
+\subsection{Continuous Parameters (Evolutionary Strategy)}
+For Continuous Parameters, reproduction is just copying, and mutation is adding
+random noise to weights (or parameters) from a Gaussian distribution with a
+specified standard deviation. Sometimes, the standard deviation can evolve as
+well.
+
+\subsection{Lindenmayer System}
+TODO what is this? :P

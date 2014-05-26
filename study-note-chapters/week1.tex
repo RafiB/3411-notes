@@ -1,0 +1,136 @@
+\part{Week 1}
+\chapter{Environment Types}
+An \textit{agent} is a function from \textit{percept sequences} to actions.
+Ideally, an agent is rational, and picks actions which maximise the performance
+measure.
+This performance measure can be evaluated empirically, and sometimes analysed
+empirically.
+\section[PEAS]{PEAS: Performance, Environment, Actuators, Sensors}
+\subsection{Performance}
+A function that measures the quality of the work done by the agent. Examples
+include Safe, Fast, Legal, Comfortable trip, Maximize profits
+\subsection{Environment}
+The environment that the agent operates in is generally described by the following properties:
+\subsubsection{Fully or partially observable}
+The environment is fully observable if the agent's sensors give it access to
+the complete state of the environment at each point in time. Note: the sensors
+only need to detect all RELEVANT information to the task. Relevance depends on
+the Performance Measure.
+Causes for partially observable environments are noise, inaccurate sensors, or
+missing sensors.
+Example of partially observable environments: a self-driving car cannot tell what
+other drivers are thinking.
+
+\subsubsection{Deterministic or stochastic or strategic}
+The environment is deterministic if the next state of the environment is
+completely determined by the current state and the action executed by the
+agent. We tend to define whether or not an environment is deterministic by
+considering the environment from the agent's point of view. Interesting to note
+is that if an environment is both deterministic and fully observable, the agent
+does not - in theory, at least - have to be concerned with uncertainty.
+If the environment is deterministic except for the strategic actions of other
+agents, we say that the environment is strategic.
+
+\subsubsection{Episodic or sequential}
+Episodic environments divide the agent's experience into atomic episodes. No
+episode affects the state of another episode, and so every episode is a
+self-contained experience of [perceive, act]. An example of an episodic
+environment is checking for defective parts on as assembly line. The agent only
+considers the current part, and what the agent perceives, and its subsequent
+action, have no effect on past or future results.
+
+In a sequential environment, the current action can affect all future
+decisions. Examples of sequential environments include playing chess, and
+self-driving cars. They are far more complicated than episodic environments
+because future moves must be considered before making a decision for the
+current state.
+
+\subsubsection{Discrete or continuous}
+Discrete/continuous can be understood in relation to state, time, and percepts
+and actions of the agent. Chess is a discrete-state environment, as there are a
+discrete number of states of a chess game. Chess also has a discrete set of
+percepts and actions. Taxi driving is both state- and time-continuous: the
+location of the taxi and other vehicles flow smoothly over time. Taxi-driving
+actions are also continuous (think of steering angles).
+
+Sometimes it is difficult to ascertain whether or not an environment is
+discrete. Input from a digital camera is technically discrete: there are $n*m$
+pixels, each of which can take any value in the RGB range 000000 to FFFFFF. On
+the other hand, the input depicts a real-life image, which forces pixels to be
+displayed with different intensities and hence feels distinctly continuous.
+
+\subsubsection{Single-agent or multi-agent}
+In a single-agent environment, the one agent does not have to account for the
+actions of other agents, and can concern itself only with how it interacts with
+the environment.
+
+An environment is described as competitive if it is multi-agent and each agent
+is in competition with every other agent. The environment is described as
+cooperative if the agents are working together to achieve some goal. N.B.:
+competitive and cooperative are not mutually exclusive.
+
+\subsubsection{Static or Dynamic}
+An environment is described as static if it does not change while the agent is
+deliberating. Otherwise, the environment is dynamic.
+
+\subsubsection{Known or Unknown}
+The environment is \textit{known} if the rules of the environment are known.
+Otherwise, the environment is unknown. Examples of rules are game rules, and
+physics/dynamics of the environment.
+
+\subsubsection{Simulated, or Situated}
+An environment is simulated if a separate program is used to simulate the
+environment, feed percepts to agents, evaluate performance, etc.\\
+See
+\href{http://en.wikipedia.org/wiki/Artificial_intelligence,_situated_approach}{Wikipedia:
+Artificial intelligence, situated approach} for more.
+
+\paragraph{Situated or Embodied?}
+There is an important distinction to make between situatedness and
+embodiment.
+
+Situatedness describes an agent being situated in a world - they are only
+concerned with the "here and now" of the world", rather than abstract
+descriptions. The state of the environment directly influences the behaviour of
+the agent system.
+
+Embodiment describes the AI having a body (a robot), which experiences the
+world directly. The actions are part of a dynamic with the world, and an
+agent's actions have immediate feedback on the robot's own percepts.
+
+An airline reservation system is situated but not embodied; it deals with
+requets and its responses change as the database changes.
+
+A spray-painting robot is embodied but not situated; it does not perceive
+anything about the object presented to it, it just goes through a
+pre-programmed series of actions. The robot has physical extent and must
+correct for its interaction with gravity, etc.
+
+\subsubsection{The Real World}
+Using these definitions, we describe our world as partially observable,
+stochastic, sequential, continuous, multi-agent, dynamic, unknown, and situated.
+
+\subsection{Actuators}
+Actuators are the set of devices that the agent can use to perform actions.
+
+\subsection{Sensors}
+Sensors allow the agent to collect the percept sequence that will be used to
+decide on the next action.
+
+\subsection[PEAS: Wumpus World]{Applying PEAS to Wumpus World}
+\subsubsection{Performance Measure}
+Return with Gold +1000, Death -1000, -1 per step, -10 for using the arrow
+\subsubsection{Actuators}
+Left, right, forward, grab, shoot
+\subsubsection{Sensors}
+Breeze, Glitter, Stench
+
+\subsection[PEAS: Self-driving car]{Applying PEAS to a self-driving car}
+\subsubsection{Performance measure}
+safety, reach destination, maximise profits, obey laws, passenger comfort
+\subsubsection{Environment}
+city streets, freeways, traffic, pedestrians, weather, customers
+\subsubsection{Actuators}
+steer, accelerate, brake, horn, speak/display
+\subsubsection{Sensors}
+video, accelerometers, guages, engine sensors, keyboard, GPS

@@ -1,0 +1,145 @@
+\BOOKMARK [-1][-]{part.1}{I Week 1}{}% 1
+\BOOKMARK [0][-]{chapter.1}{Environment Types}{part.1}% 2
+\BOOKMARK [1][-]{section.1.1}{PEAS}{chapter.1}% 3
+\BOOKMARK [2][-]{subsection.1.1.1}{Performance}{section.1.1}% 4
+\BOOKMARK [2][-]{subsection.1.1.2}{Environment}{section.1.1}% 5
+\BOOKMARK [3][-]{section*.2}{Fully or partially observable}{subsection.1.1.2}% 6
+\BOOKMARK [3][-]{section*.3}{Deterministic or stochastic or strategic}{subsection.1.1.2}% 7
+\BOOKMARK [3][-]{section*.4}{Episodic or sequential}{subsection.1.1.2}% 8
+\BOOKMARK [3][-]{section*.5}{Discrete or continuous}{subsection.1.1.2}% 9
+\BOOKMARK [3][-]{section*.6}{Single-agent or multi-agent}{subsection.1.1.2}% 10
+\BOOKMARK [3][-]{section*.7}{Static or Dynamic}{subsection.1.1.2}% 11
+\BOOKMARK [3][-]{section*.8}{Known or Unknown}{subsection.1.1.2}% 12
+\BOOKMARK [3][-]{section*.9}{Simulated, or Situated}{subsection.1.1.2}% 13
+\BOOKMARK [4][-]{section*.10}{Situated or Embodied?}{section*.9}% 14
+\BOOKMARK [3][-]{section*.11}{The Real World}{subsection.1.1.2}% 15
+\BOOKMARK [2][-]{subsection.1.1.3}{Actuators}{section.1.1}% 16
+\BOOKMARK [2][-]{subsection.1.1.4}{Sensors}{section.1.1}% 17
+\BOOKMARK [2][-]{subsection.1.1.5}{PEAS: Wumpus World}{section.1.1}% 18
+\BOOKMARK [3][-]{section*.12}{Performance Measure}{subsection.1.1.5}% 19
+\BOOKMARK [3][-]{section*.13}{Actuators}{subsection.1.1.5}% 20
+\BOOKMARK [3][-]{section*.14}{Sensors}{subsection.1.1.5}% 21
+\BOOKMARK [2][-]{subsection.1.1.6}{PEAS: Self-driving car}{section.1.1}% 22
+\BOOKMARK [3][-]{section*.15}{Performance measure}{subsection.1.1.6}% 23
+\BOOKMARK [3][-]{section*.16}{Environment}{subsection.1.1.6}% 24
+\BOOKMARK [3][-]{section*.17}{Actuators}{subsection.1.1.6}% 25
+\BOOKMARK [3][-]{section*.18}{Sensors}{subsection.1.1.6}% 26
+\BOOKMARK [-1][-]{part.2}{II Week 2}{}% 27
+\BOOKMARK [0][-]{chapter.2}{Agent Types}{part.2}% 28
+\BOOKMARK [1][-]{section.2.1}{Reactive Agent}{chapter.2}% 29
+\BOOKMARK [2][-]{subsection.2.1.1}{Limitations of Reactive Agents}{section.2.1}% 30
+\BOOKMARK [1][-]{section.2.2}{Model-Based Agent}{chapter.2}% 31
+\BOOKMARK [2][-]{subsection.2.2.1}{Advantages of Model-Based Agents}{section.2.2}% 32
+\BOOKMARK [2][-]{subsection.2.2.2}{Limitations of Model-Based Agents}{section.2.2}% 33
+\BOOKMARK [1][-]{section.2.3}{Planning Agent}{chapter.2}% 34
+\BOOKMARK [1][-]{section.2.4}{Learning Agent}{chapter.2}% 35
+\BOOKMARK [0][-]{chapter.3}{Solving Problems by Searching}{part.2}% 36
+\BOOKMARK [1][-]{section.3.1}{Motivation}{chapter.3}% 37
+\BOOKMARK [1][-]{section.3.2}{Romania Example}{chapter.3}% 38
+\BOOKMARK [2][-]{subsection.3.2.1}{Single-State Task Specification}{section.3.2}% 39
+\BOOKMARK [2][-]{subsection.3.2.2}{Choosing states and actions}{section.3.2}% 40
+\BOOKMARK [2][-]{subsection.3.2.3}{Problem types}{section.3.2}% 41
+\BOOKMARK [2][-]{subsection.3.2.4}{Applying task specifications}{section.3.2}% 42
+\BOOKMARK [3][-]{section*.19}{The 8-Puzzle}{subsection.3.2.4}% 43
+\BOOKMARK [3][-]{section*.20}{Rubik's Cube}{subsection.3.2.4}% 44
+\BOOKMARK [1][-]{section.3.3}{Path Search Algorithms}{chapter.3}% 45
+\BOOKMARK [2][-]{subsection.3.3.1}{Data Structures for Search Trees}{section.3.3}% 46
+\BOOKMARK [2][-]{subsection.3.3.2}{Search Strategies}{section.3.3}% 47
+\BOOKMARK [2][-]{subsection.3.3.3}{Approaches to comparing algorithms}{section.3.3}% 48
+\BOOKMARK [3][-]{section*.21}{Benchmarking}{subsection.3.3.3}% 49
+\BOOKMARK [3][-]{section*.22}{Analysis of algorithms}{subsection.3.3.3}% 50
+\BOOKMARK [2][-]{subsection.3.3.4}{Uninformed Search Strategies}{section.3.3}% 51
+\BOOKMARK [3][-]{section*.23}{Breadth-first search}{subsection.3.3.4}% 52
+\BOOKMARK [3][-]{section*.24}{Uniform-Cost Search}{subsection.3.3.4}% 53
+\BOOKMARK [3][-]{section*.25}{Depth-First Search}{subsection.3.3.4}% 54
+\BOOKMARK [3][-]{section*.26}{Depth-Limited Search}{subsection.3.3.4}% 55
+\BOOKMARK [3][-]{section*.27}{Iterative Deepening Search}{subsection.3.3.4}% 56
+\BOOKMARK [3][-]{section*.28}{Bidirectional Search}{subsection.3.3.4}% 57
+\BOOKMARK [3][-]{section*.29}{Complexities of Uninformed Search Strategies}{subsection.3.3.4}% 58
+\BOOKMARK [2][-]{subsection.3.3.5}{Informed Search Strategies}{section.3.3}% 59
+\BOOKMARK [-1][-]{part.3}{III Week 3}{}% 60
+\BOOKMARK [0][-]{chapter.4}{Informed Search}{part.3}% 61
+\BOOKMARK [1][-]{section.4.1}{Search Strategies}{chapter.4}% 62
+\BOOKMARK [1][-]{section.4.2}{Best-First Search}{chapter.4}% 63
+\BOOKMARK [2][-]{subsection.4.2.1}{Greedy Best-First Search}{section.4.2}% 64
+\BOOKMARK [2][-]{subsection.4.2.2}{Straight Line Distance as a Heuristic}{section.4.2}% 65
+\BOOKMARK [2][-]{subsection.4.2.3}{A* Search}{section.4.2}% 66
+\BOOKMARK [3][-]{section*.30}{Proving Optimality of A* Search}{subsection.4.2.3}% 67
+\BOOKMARK [2][-]{subsection.4.2.4}{Iterative Deepening A* Search}{section.4.2}% 68
+\BOOKMARK [1][-]{section.4.3}{Heuristics}{chapter.4}% 69
+\BOOKMARK [2][-]{subsection.4.3.1}{Dominance of Heuristics}{section.4.3}% 70
+\BOOKMARK [2][-]{subsection.4.3.2}{How to Find Heuristic Functions}{section.4.3}% 71
+\BOOKMARK [0][-]{chapter.5}{Reactive Agents}{part.3}% 72
+\BOOKMARK [1][-]{section.5.1}{History of Reactive Agents}{chapter.5}% 73
+\BOOKMARK [2][-]{subsection.5.1.1}{Braitenberg Vehicles}{section.5.1}% 74
+\BOOKMARK [3][-]{section*.31}{Hate: Crossed and excitatory}{subsection.5.1.1}% 75
+\BOOKMARK [3][-]{section*.32}{Love: Straight and inhibitory}{subsection.5.1.1}% 76
+\BOOKMARK [3][-]{section*.33}{Fear: Straight and excitatory}{subsection.5.1.1}% 77
+\BOOKMARK [3][-]{section*.34}{Curiosity: Crossed and inhibitory}{subsection.5.1.1}% 78
+\BOOKMARK [2][-]{subsection.5.1.2}{The Swiss Robots}{section.5.1}% 79
+\BOOKMARK [1][-]{section.5.2}{Behaviour-Based Robotics}{chapter.5}% 80
+\BOOKMARK [2][-]{subsection.5.2.1}{Modern Perspective}{section.5.2}% 81
+\BOOKMARK [-1][-]{part.4}{IV Week 4}{}% 82
+\BOOKMARK [0][-]{chapter.6}{Games}{part.4}% 83
+\BOOKMARK [1][-]{section.6.1}{Why Games?}{chapter.6}% 84
+\BOOKMARK [1][-]{section.6.2}{Types of Games}{chapter.6}% 85
+\BOOKMARK [2][-]{subsection.6.2.1}{Discrete Games}{section.6.2}% 86
+\BOOKMARK [2][-]{subsection.6.2.2}{Continuous, embodied games}{section.6.2}% 87
+\BOOKMARK [1][-]{section.6.3}{Key Ideas}{chapter.6}% 88
+\BOOKMARK [2][-]{subsection.6.3.1}{Minimax}{section.6.3}% 89
+\BOOKMARK [3][-]{section*.35}{Minimax Algorithm}{subsection.6.3.1}% 90
+\BOOKMARK [4][-]{section*.36}{Negamax formulation of Minimax}{section*.35}% 91
+\BOOKMARK [4][-]{section*.37}{Properties of Minimax}{section*.35}% 92
+\BOOKMARK [2][-]{subsection.6.3.2}{Reducing the Search Effort}{section.6.3}% 93
+\BOOKMARK [3][-]{section*.38}{Heuristic Evaluation for Chess}{subsection.6.3.2}% 94
+\BOOKMARK [3][-]{section*.39}{Motivation for Pruning}{subsection.6.3.2}% 95
+\BOOKMARK [3][-]{section*.40}{- search algorithm}{subsection.6.3.2}% 96
+\BOOKMARK [4][-]{section*.41}{Negamax formulation of - search}{section*.40}% 97
+\BOOKMARK [4][-]{section*.42}{Why is it called -?}{section*.40}% 98
+\BOOKMARK [4][-]{section*.43}{Properties of -}{section*.40}% 99
+\BOOKMARK [1][-]{section.6.4}{Chess}{chapter.6}% 100
+\BOOKMARK [1][-]{section.6.5}{Checkers}{chapter.6}% 101
+\BOOKMARK [1][-]{section.6.6}{Go}{chapter.6}% 102
+\BOOKMARK [1][-]{section.6.7}{Stochastic Games}{chapter.6}% 103
+\BOOKMARK [1][-]{section.6.8}{Partially Observable Games}{chapter.6}% 104
+\BOOKMARK [0][-]{chapter.7}{Motion Planning}{part.4}% 105
+\BOOKMARK [1][-]{section.7.1}{Motion Planning Approaches}{chapter.7}% 106
+\BOOKMARK [2][-]{subsection.7.1.1}{Unknown Environments \(on-board sensors only\)}{section.7.1}% 107
+\BOOKMARK [3][-]{section*.44}{Occupancy Grid}{subsection.7.1.1}% 108
+\BOOKMARK [3][-]{section*.45}{Potential Field}{subsection.7.1.1}% 109
+\BOOKMARK [3][-]{section*.46}{Vector Field Histogram}{subsection.7.1.1}% 110
+\BOOKMARK [2][-]{subsection.7.1.2}{Known Environments \(overhead cameras\)}{section.7.1}% 111
+\BOOKMARK [3][-]{section*.47}{Delaunay Triangulation}{subsection.7.1.2}% 112
+\BOOKMARK [3][-]{section*.48}{Parameterized Cubic Splines}{subsection.7.1.2}% 113
+\BOOKMARK [2][-]{subsection.7.1.3}{Minimizing Time instead of Distance}{section.7.1}% 114
+\BOOKMARK [-1][-]{part.5}{V Week 5}{}% 115
+\BOOKMARK [0][-]{chapter.8}{Constraint Satisfaction Problems}{part.5}% 116
+\BOOKMARK [1][-]{section.8.1}{Constraint Satisfaction Problems \(CSPs\)}{chapter.8}% 117
+\BOOKMARK [2][-]{subsection.8.1.1}{Example: Map Colouring}{section.8.1}% 118
+\BOOKMARK [2][-]{subsection.8.1.2}{Example: n-Queens Puzzle}{section.8.1}% 119
+\BOOKMARK [2][-]{subsection.8.1.3}{Example: Cryptarithmetic}{section.8.1}% 120
+\BOOKMARK [3][-]{section*.49}{Cryptarithmetic with Hidden Variables}{subsection.8.1.3}% 121
+\BOOKMARK [2][-]{subsection.8.1.4}{Example: Sudoku}{section.8.1}% 122
+\BOOKMARK [2][-]{subsection.8.1.5}{Real-World CSPs}{section.8.1}% 123
+\BOOKMARK [2][-]{subsection.8.1.6}{Types of Constraints for CSPs}{section.8.1}% 124
+\BOOKMARK [2][-]{subsection.8.1.7}{Standard search formulation}{section.8.1}% 125
+\BOOKMARK [2][-]{subsection.8.1.8}{Backtracking search}{section.8.1}% 126
+\BOOKMARK [3][-]{section*.50}{Minimum Remaining Values \(MRV\)}{subsection.8.1.8}% 127
+\BOOKMARK [3][-]{section*.51}{Degree Heuristic}{subsection.8.1.8}% 128
+\BOOKMARK [3][-]{section*.52}{Least Constraining Value}{subsection.8.1.8}% 129
+\BOOKMARK [3][-]{section*.53}{Forward Checking}{subsection.8.1.8}% 130
+\BOOKMARK [4][-]{section*.54}{Constraint propagation}{section*.53}% 131
+\BOOKMARK [3][-]{section*.55}{Arc Consistency}{subsection.8.1.8}% 132
+\BOOKMARK [2][-]{subsection.8.1.9}{Local Search}{section.8.1}% 133
+\BOOKMARK [3][-]{section*.56}{Hill-climbing by min-conflicts}{subsection.8.1.9}% 134
+\BOOKMARK [4][-]{section*.57}{Phase transition in CSPs}{section*.56}% 135
+\BOOKMARK [3][-]{section*.58}{Flat regions and local optima}{subsection.8.1.9}% 136
+\BOOKMARK [2][-]{subsection.8.1.10}{Simulated Annealing}{section.8.1}% 137
+\BOOKMARK [0][-]{chapter.9}{Evolutionary Computation}{part.5}% 138
+\BOOKMARK [1][-]{section.9.1}{Evolutionary Computation Paradigms}{chapter.9}% 139
+\BOOKMARK [2][-]{subsection.9.1.1}{Bit String Operators \(Genetic Algorithm\)}{section.9.1}% 140
+\BOOKMARK [3][-]{section*.59}{Crossovers}{subsection.9.1.1}% 141
+\BOOKMARK [3][-]{section*.60}{Point Mutation}{subsection.9.1.1}% 142
+\BOOKMARK [2][-]{subsection.9.1.2}{S-expression trees \(Genetic Programming\)}{section.9.1}% 143
+\BOOKMARK [2][-]{subsection.9.1.3}{Continuous Parameters \(Evolutionary Strategy\)}{section.9.1}% 144
+\BOOKMARK [2][-]{subsection.9.1.4}{Lindenmayer System}{section.9.1}% 145

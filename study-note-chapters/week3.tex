@@ -1,0 +1,206 @@
+\part{Week 3}
+\chapter{Informed Search}
+\section{Search Strategies}
+General search algorithm:
+\begin{itemize}
+    \item Add initial state to queue
+    \begin{itemize}
+        \item take node from front of queue
+        \item test if it is a goal state; if so, terminate
+        \item expand it (generate successor nodes and add them to the queue)
+    \end{itemize}
+\end{itemize}
+
+Search strategies are distinguished by the order in which new nodes are added
+to the queue of nodes awaiting expansion.
+
+BFS and DFS treat all nodes equally; BFS adds new nodes to the end of the
+queue, DFS adds new nodes to the front of the queue.
+
+Best First Search uses an evaluation function $f()$ to order the nodes in the
+queue. An example is Uniform Cost Search; $f(n)$ = cost $g(n)$ of path from
+root to node $n$.
+
+Informed or heuristic search strategies incorporate into $f(n)$ an estimate of
+distance to goal. Greedy Search uses $f(n)$ = estimate $h(n)$ of cost from node
+$n$ to goal. A* search uses $f(n) = g(n) + h(n)$.
+
+\section{Best-First Search}
+The Best-First Search family of algorithms have different evaluation functions
+$f(n)$. A key component of these algorithms is the heuristic function $h(n)$.
+
+Heuristic function $h$: \{Set of nodes\} $\rightarrow$ $R$. $h(n)$ = estimated
+cost of the cheapest path from the current node $n$ to the goal node. Heuristic
+functions provide an estimate of solution cost.
+
+\subsection{Greedy Best-First Search}
+Greedy Best-First Search is a Best-First Search that selects the next node for
+expansion using the heuristic function as its evaluation function. i.e. $f(n) =
+h(n)$. $h(n) = 0 \Longleftrightarrow n$ is a goal state. Greedy search
+minimises the estimated cost to the goal; it expands whichever node $n$ is
+estimated to be closest to the goal.
+
+Greedy Best-First Search is not complete as it can get stuck in loops. It is
+complete is finite spaces with repeated-space checking.
+
+Time complexity is $O(b^m)$ where $m$ is the maximum depth in the search space.
+
+Space complexity is $O(b^m)$ as all nodes are kept in memory.
+
+Greedy search is not optimal. Greedy search has the same problems as DFS, but a
+good heuristic can reduce time and memory costs.
+
+\subsection{Straight Line Distance as a Heuristic}
+$h_{SLD}(n)$ = straight-line distance between $n$ and the goal node. If you
+know map coordinates of $n$ and the goal, you can find the straight line
+distance using $\sqrt{(n_x - goal_x)^2 + (n_y - goal_y)^2}$
+
+\subsection{A* Search}
+A* Search uses $f(n) = g(n) + h(n)$ where $g(n)$ is the cost from the initial
+node to node $n$, $h(n)$ is the estimated cost of the cheapest path from $n$ to
+goal, and $f(n)$ is the estimated total cost of the cheapest solution through
+node $n$.
+
+Greedy search minimises $h(n)$ (efficient but not optimal or complete), Uniform
+Cost Search minimises $g(n)$ (optimal and complete but not efficient). A*
+minimises $f(n) = g(n) + h(n)$ - the idea is to preserve the efficiency of
+Greedy without expanding paths that are already expensive. A* is both optimal
+and complete, provided that $h(n)$ is admissible (never overestimates the cost
+to reach the goal).
+
+Specifically, a heuristic $h()$ is admissible if $\forall n, h(n) \leq h^{*}(n)$
+where $h^{*}(n)$ is the true cost from $n$ to the goal. If $h$ is admissible then
+$f(n)$ never overestimates the actual cost of the best solution through $n$.
+$h_{SLD}()$ is admissible because the shortest path between two points is the
+straight line connecting them.
+
+\subsubsection{Proving Optimality of A* Search}
+Suppose a suboptimal goal node $G_2$ has been generated and is in the queue.
+Let $n$ be the last unexpanded node on the shortest path to an optimal goal
+node $G$.
+
+\begin{align*}
+f(G_2) &= g(G_2) \text{  since $h(G_2) = 0$}\\
+&> g(G) \text{  since $G_2$ is suboptimal}\\
+&\geq f(n) \text{  since $h$ is admissible}\\
+\end{align*}
+
+Since $f(G_2) > f(n)$, A* will never select $G_2$ for expansion (although it
+may be generated and put into the queue). In words, A* will keep searching
+until there is no possibility of finding a shorter solution, even after finding
+a goal node.
+
+A* is complete unless there are infinitely many nodes with $f \leq$ cost of
+solution. The time complexity is exponential in \textit{relative error in ($h$ * length
+of solution)}. All nodes are kept in memory, so space complexity is not great. A*
+is optimal, given that the heuristic is admissible.
+
+\subsection{Iterative Deepening A* Search}
+Iterative Deepening A* is a low-memory variant of A* which performs a series of
+DFSs, cutting off each search when the sum $f(n) = g(n) + h(n)$ exceeds some
+pre-defined threshold. The threshold is steadily increased with each successive
+search. Iterative Deepening A* is asymptotically as efficient as A* for domains
+where the number of states grows exponentially.
+
+\section{Heuristics}
+\subsection{Dominance of Heuristics}
+If $h_{2}(n) \geq h_{1}(n)$ for all $n$ (both admissible) then $h_2$
+\textit{dominates} $h_{1}$ and is better for search. The aim is therefore to
+make the heuristic $h()$ as large as possible without exceeding $h^{*}()$.
+
+\subsection{How to Find Heuristic Functions}
+Admissible heuristics can often be derived from the exact solution cost of a
+relaxed (simplified) version of the problem that has some constraints weakened
+or removed.
+
+One can also use a \textit{composite heuristic}; let $h_1, h_2, \ldots, h_m$ be
+admissible heuristics. The composite heuristic $h(n) = max(h_{1}(n), h_{2}(n),
+\ldots, h_{m}(n))$. $h$ is trivially admissible, and more importantly,
+dominates $h_1, h_2, \ldots, h_m$.
+
+\chapter{Reactive Agents}
+As mentioned in the beginning of chapter 2, reactive agents choose the next
+action based only on what they currently perceive, using a policy. They have no
+memory, and are unable to plan or logically reason. However, interesting
+behaviours can emerge from the simple rules in the policy.
+
+\section{History of Reactive Agents}
+\subsection{Braitenberg Vehicles}
+Braitenberg showed how simple configurations of sensors and motors can lead to
+surprisingly sophisticated behaviour. The simplest Braitenberg vehicles have
+two wheels and two sensors. The sensors respond to light, and the response is
+inversely proportionate to distance from the light source.
+
+The connections can be straight or crossed, and excitatory ($+$) or inhibitory.
+Combinations of these lead to four behaviours: hate, love, fear, and curiosity.
+Imagine a vehicle with a light source ahead of it to its right.
+\subsubsection{Hate: Crossed and excitatory}
+The vehicle will sense the light with its right-hand sensor first, causing its
+\textit{left} wheel (the wires are crossed) to accelerate (excitatory). When
+the vehicle has turned so that the light source is directly ahead of it, the
+left and right sensors will be receiving the same input and the vehicle will
+travel in a straight line towards the light source.
+
+The vehicle will travel faster and faster before ramming into
+the light source, and will then attempt to continue driving.
+
+\subsubsection{Love: Straight and inhibitory}
+The vehicle will sense the light with its right-hand sensor first, causing its
+right wheel to deccelerate. When the vehicle has turned so that the light
+source is directly ahead of it, the left and right sensors will be receiving
+the same input and the vehicle will travel in a straight line towards the light
+source.
+
+The vehicle will slow until it is directly in front of the light source, when
+it stops.
+
+\subsubsection{Fear: Straight and excitatory}
+The vehicle will sense the light with its right-hand sensor first, causing its
+right wheel to accelerate. As the vehicle gets closer to the light source it
+will increase its speed, and will continue turning away from the light source
+and accelerating until it no longer senses the light.
+
+\subsubsection{Curiosity: Crossed and inhibitory}
+The vehicle will sense the light with its right-hand sensor first, causing its
+left wheel to deccelerate. The vehicle will approach the light source and slow
+until a certain point, when the vehicle will turn away from the light, picking
+up speed in the process.
+
+\subsection{The Swiss Robots}
+The Swiss Robots were given a simple set of rule that are used to clean up
+objects in an area. The rules are as follows:
+\begin{itemize}
+    \item Normally, move forward
+    \item If you detect an obstacle to the left or right, turn away from it
+    \item If you detect an obstacle directly in front of you, move forward.
+\end{itemize}
+
+TODO THIS NEEDS COMMENTARY. HALP.
+
+\section{Behaviour-Based Robotics}
+Introduced by Rodney Brooks in the late 1980s, behaviour-based robotics was
+meant as a challenge to GOFAI (Good Old Fashioned AI). It had a few key points:
+\begin{itemize}
+    \item robots should be based on insects rather than humans
+    \item tasks like walking around and avoiding obstacles rather than playing
+        Chess
+    \item abandon traditional horizontal decomposition (Sense $\rightarrow$
+        Plan $\rightarrow$ Act)
+    \item replace vertical decomposition (each layer can connect sensing to an
+        action)
+\end{itemize}
+
+TODO INSERT IMAGES PLZ
+
+\subsection{Modern Perspective}
+Each layer in vertical composition is a behaviour. Low-level behaviours such as
+"avoid hitting things" are reactive, connecting sensors to actuators. Mid-level
+behaviours like "build maps" make use of a world model. High-level behaviours
+make use of a world map and planning.
+
+Importantly, higher-level behaviour may take control from lower-level
+behaviour. e.g. if low-level behaviour has gotten stuck. Lower-level behaviour
+can also take control from higher-level behaviour, usually in an emergency
+(i.e. to avoid getting burned, or falling down a staircase). This is similar to
+the way that humans' nervous systems have immediate responses to triggers such
+as heat and pain.
