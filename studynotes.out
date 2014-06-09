@@ -143,3 +143,64 @@
 \BOOKMARK [2][-]{subsection.9.1.2}{S-expression trees \(Genetic Programming\)}{section.9.1}% 143
 \BOOKMARK [2][-]{subsection.9.1.3}{Continuous Parameters \(Evolutionary Strategy\)}{section.9.1}% 144
 \BOOKMARK [2][-]{subsection.9.1.4}{Lindenmayer System}{section.9.1}% 145
+\BOOKMARK [1][-]{section.9.2}{Now and the Future}{chapter.9}% 146
+\BOOKMARK [2][-]{subsection.9.2.1}{Grammatical Evolution}{section.9.2}% 147
+\BOOKMARK [2][-]{subsection.9.2.2}{Hierarchical Evolutionary Re-Combination \(HERCL\)}{section.9.2}% 148
+\BOOKMARK [-1][-]{part.6}{VI Week 6}{}% 149
+\BOOKMARK [0][-]{chapter.10}{Logic}{part.6}% 150
+\BOOKMARK [1][-]{section.10.1}{Logical Agents}{chapter.10}% 151
+\BOOKMARK [2][-]{subsection.10.1.1}{Example: General Game-Playing Agents}{section.10.1}% 152
+\BOOKMARK [3][-]{section*.61}{How to represent game rules}{subsection.10.1.1}% 153
+\BOOKMARK [4][-]{section*.62}{Problem}{section*.61}% 154
+\BOOKMARK [4][-]{section*.63}{Solution}{section*.61}% 155
+\BOOKMARK [3][-]{section*.64}{Game Description Language \(GDL\): Facts and Rules}{subsection.10.1.1}% 156
+\BOOKMARK [2][-]{subsection.10.1.2}{Example: Wumpus World}{section.10.1}% 157
+\BOOKMARK [3][-]{section*.65}{Agent's actuators}{subsection.10.1.2}% 158
+\BOOKMARK [3][-]{section*.66}{Agent's percepts}{subsection.10.1.2}% 159
+\BOOKMARK [3][-]{section*.67}{Agents in the Wumpus World}{subsection.10.1.2}% 160
+\BOOKMARK [2][-]{subsection.10.1.3}{Propositional Logic}{section.10.1}% 161
+\BOOKMARK [3][-]{section*.68}{Vocabulary}{subsection.10.1.3}% 162
+\BOOKMARK [3][-]{section*.69}{Example: Knights and Knaves}{subsection.10.1.3}% 163
+\BOOKMARK [4][-]{section*.70}{Assumptions}{section*.69}% 164
+\BOOKMARK [4][-]{section*.71}{Example}{section*.69}% 165
+\BOOKMARK [3][-]{section*.72}{Models}{subsection.10.1.3}% 166
+\BOOKMARK [3][-]{section*.73}{Logical Reasoning}{subsection.10.1.3}% 167
+\BOOKMARK [4][-]{section*.74}{Example 1}{section*.73}% 168
+\BOOKMARK [5][-]{section*.75}{How many models satisfy this sentence?}{section*.74}% 169
+\BOOKMARK [5][-]{section*.76}{What follows logically from this sentence?}{section*.74}% 170
+\BOOKMARK [4][-]{section*.77}{Example 2}{section*.73}% 171
+\BOOKMARK [5][-]{section*.78}{How many models satisfy this sentence?}{section*.77}% 172
+\BOOKMARK [3][-]{section*.79}{Logical Reasoning in the Wumpus World}{subsection.10.1.3}% 173
+\BOOKMARK [2][-]{subsection.10.1.4}{First-Order Logic}{section.10.1}% 174
+\BOOKMARK [3][-]{section*.80}{Vocabulary}{subsection.10.1.4}% 175
+\BOOKMARK [3][-]{section*.81}{Other examples of First-Order Logic Sentences}{subsection.10.1.4}% 176
+\BOOKMARK [3][-]{section*.82}{Semantics}{subsection.10.1.4}% 177
+\BOOKMARK [3][-]{section*.83}{Logic Entailment}{subsection.10.1.4}% 178
+\BOOKMARK [4][-]{section*.84}{Example A}{section*.83}% 179
+\BOOKMARK [4][-]{section*.85}{Example B}{section*.83}% 180
+\BOOKMARK [1][-]{section.10.2}{Applied Logic: Describing Games with GDL}{chapter.10}% 181
+\BOOKMARK [2][-]{subsection.10.2.1}{Example: Noughts and Crosses}{section.10.2}% 182
+\BOOKMARK [3][-]{section*.86}{Constants}{subsection.10.2.1}% 183
+\BOOKMARK [3][-]{section*.87}{Functions}{subsection.10.2.1}% 184
+\BOOKMARK [3][-]{section*.88}{Predicates}{subsection.10.2.1}% 185
+\BOOKMARK [3][-]{section*.89}{Players and initial state}{subsection.10.2.1}% 186
+\BOOKMARK [3][-]{section*.90}{Move Generator}{subsection.10.2.1}% 187
+\BOOKMARK [3][-]{section*.91}{Game Physics}{subsection.10.2.1}% 188
+\BOOKMARK [3][-]{section*.92}{Termination and Goal}{subsection.10.2.1}% 189
+\BOOKMARK [1][-]{section.10.3}{Knowledge Interchange Format}{chapter.10}% 190
+\BOOKMARK [2][-]{subsection.10.3.1}{Noughts And Crosses in KIF}{section.10.3}% 191
+\BOOKMARK [1][-]{section.10.4}{Inference}{chapter.10}% 192
+\BOOKMARK [2][-]{subsection.10.4.1}{Propositional Inference: Example}{section.10.4}% 193
+\BOOKMARK [2][-]{subsection.10.4.2}{Converting a sentence to CNF}{section.10.4}% 194
+\BOOKMARK [2][-]{subsection.10.4.3}{A Possible Resolution Algorithm}{section.10.4}% 195
+\BOOKMARK [3][-]{section*.93}{Example}{subsection.10.4.3}% 196
+\BOOKMARK [2][-]{subsection.10.4.4}{First-Order Resolution for Logic Programs/GDL}{section.10.4}% 197
+\BOOKMARK [3][-]{section*.94}{Substitutions}{subsection.10.4.4}% 198
+\BOOKMARK [3][-]{section*.95}{Unification}{subsection.10.4.4}% 199
+\BOOKMARK [3][-]{section*.96}{Most General Unifiers}{subsection.10.4.4}% 200
+\BOOKMARK [4][-]{section*.97}{Theorem}{section*.96}% 201
+\BOOKMARK [3][-]{section*.98}{Resolution Step for Queries + Logic Program Clauses}{subsection.10.4.4}% 202
+\BOOKMARK [3][-]{section*.100}{Derivation 1: Query Answering}{subsection.10.4.4}% 203
+\BOOKMARK [3][-]{section*.102}{Derivation 2: Query Answering with Negation}{subsection.10.4.4}% 204
+\BOOKMARK [3][-]{section*.104}{Derivation 3: Query Answering with Disjunction}{subsection.10.4.4}% 205
+\BOOKMARK [1][-]{section.10.5}{Logic in Action}{chapter.10}% 206

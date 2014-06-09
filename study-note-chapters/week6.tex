@@ -1,4 +1,835 @@
 \part{Week 6}
 \chapter{Logic}
 \section{Logical Agents}
+Humans know things, and what we know helps us do things.
 
+We have knowledge-based agents, which use internal representations of knowledge
+and reason about this knowledge to infer what to do.
+
+We also have logical agents, which use logical sentences to represent
+knowledge, and reason by inferring new sentences.
+
+\subsection{Example: General Game-Playing Agents}
+General Game Players are systems that are able to understand formal
+descriptions of arbitrary games, and are able to learn to play these games
+effectively. They don't know the rules of a game until they start playing.
+
+Unlike specialised game players (like Deep Blue (chess) or Chinook (checkers))
+they do not use algorithms in advance for specific games.
+
+\subsubsection{How to represent game rules}
+It is possible in principle to communicate game information in the form of
+tables (for legal moves, state update)
+
+\paragraph{Problem} the size of the description - even if state is finite, the
+necessary tables can be large (for example, there are $10^{44}$ states in
+Chess)
+
+\paragraph{Solution} in many cases, worlds are best thought of in terms of
+atomic features tha may change (``position of white queen'', ``black can
+castle'', etc). We can represent features directly and use logic to describe
+how actions change individual features rather than entire states.
+
+\subsubsection{Game Description Language (GDL): Facts and Rules}
+In the following, bold/blue symbols are pre-defined keywords in the logic-based
+GDL.
+
+\textbf{Facts}
+\begin{lstlisting}[morekeywords={role, init}]
+role(xplayer)
+role(oplayer)
+
+init(cell(1,1,b))
+init(cell(1,2,b))
+...
+init(cell(3,3,b))
+
+init(control(xplayer))
+\end{lstlisting}
+
+\textbf{Rules}
+\begin{lstlisting}[morekeywords={legal, true, next, does}]
+legal(W,mark(M,N)) <=
+    true(cell(M,N,b)) $\land$ true(control(W))
+
+next(cell(M,N,x)) <=
+    does(xplayer,mark(M,N))
+
+next(cell(M,N,o)) <=
+    does(oplayer,mark(M,N))
+\end{lstlisting}
+
+\subsection{Example: Wumpus World}
+\subsubsection{Agent's actuators}
+\begin{itemize}
+    \item turn $90^{\circ}$ left or right
+    \item move forward one square
+    \item grab the gold
+    \item shoot an arrow in the current direction
+    \item climb out of the cave from [1,1]
+\end{itemize}
+
+\subsubsection{Agent's percepts}
+\begin{itemize}
+    \item a stench when adjacent to the wumpus
+    \item a breeze when adjacent to a pit
+    \item a glitter when in the square with gold
+    \item a bump when walking into a wall
+    \item a scream when the wumpus is killed
+\end{itemize}
+
+\subsubsection{Agents in the Wumpus World}
+The main challenge is the initial ignorance of the configuration of the
+environment. The solution to this problem is to draw the right inferences from
+the available information.
+
+\subsection{Propositional Logic}
+\subsubsection{Vocabulary}
+\begin{tabular}{l l l}
+Proposition symbols: & p, q, r\\\\
+Logical connectives: & $\neg{p}$             & (negation, ``not p'')\\
+                     & $p\land{q}$           & (conjunction, ``p and q'')\\
+                     & $p\lor{q}$            & (disjunction, ``p or q'')\\
+                     & $p\Rightarrow{q}$     & (implication, ``p implies q'')\\
+                     & $p\Leftrightarrow{q}$ & (equivalence, ``p if and only if q'')\\\\
+Sentences:           & \multicolumn{2}{p{8cm}}{built from proposition symbols and connectives, e.g.
+$ready \Leftrightarrow (a4paper \lor a3paper) \land \neg{jam}$}\\\\
+Order precedence:    & $\neg, \land, \lor, \Rightarrow, \Leftrightarrow$\\
+\end{tabular}
+
+\subsubsection{Example: Knights and Knaves}
+\paragraph{Assumptions} knights always tell the truth, knaves always lie
+\paragraph{Example} Two people, A and B. A says ``One of us is a knave!''
+
+Truth table:\\
+\begin{tabular}{l l | l l l l l}
+\hline
+p     & q     & $\neg{p}$ & $p \land q$ & $p \lor q$ & $p \Rightarrow q$ & $p \Leftrightarrow q$\\ \hline
+false & false & true      & false       & false      & true              & true\\ \hline
+false & true  & true      & false       & truee      & true              & false\\ \hline
+true  & false & false     & false       & true       & false             & false\\ \hline
+true  & true  & false     & true        & true       & true              & true\\ \hline
+\end{tabular}\\
+
+Example:\\
+\begin{tabular}{l l | l l l l}
+\hline
+A     & B     & $\neg A$ & $\neg B$ & $\neg A \lor \neg B$ & $A \Leftrightarrow \neg A \lor \neg B$\\ \hline
+false & false & true     & true     & true                 & false\\ \hline
+false & true  & true     & false    & true                 & false\\ \hline
+true  & false & false    & true     & true                 & true\\ \hline
+true  & true  & false    & false    & false                & false\\ \hline
+\end{tabular}
+
+\subsubsection{Models}
+A \textbf{model} $\mathcal{M}$ fixes the truth value (true of false) for every
+proposition symbol. For example, $\mathcal{M} = \{A=true, B=false\}$.\\\\
+$\mathcal{M}$ satisfies a proposition $p$ iff $p = \text{true} \in \mathcal{M}$\\
+$\mathcal{M}$ satisfies a sentence $\neg \alpha$ iff $\mathcal{M}$ does not satisfy
+$a$.\\
+$\mathcal{M}$ satisfies a sentence $\alpha \land \beta$ iff $\mathcal{M}$
+satisfies $\alpha$ and $\mathcal{M}$ satisfies $\beta$\\
+$\mathcal{M}$ satisfies a sentence $\alpha \lor \beta$ iff $\mathcal{M}$
+satisfies $\alpha$ or $\mathcal{M}$ satisfies $\beta$ or both.\\
+$\mathcal{M}$ satisfies a sentence $\alpha \Rightarrow \beta$ iff $\mathcal{M}$
+satisfies $\beta$ whenever $\mathcal{M}$ satisfies $\alpha$.\\
+$\mathcal{M}$ satisfies a sentence $\alpha \Leftrightarrow \beta$ iff
+$\mathcal{M}$ satisfies $\alpha$ if and only if $\mathcal{M}$ satisfies $\beta$\\\\
+Example: $\mathcal{M} = \{A = \text{true}, B = \text{false}\}$ satisfies $A
+\Leftrightarrow \neg A \lor \neg B$
+
+\subsubsection{Logical Reasoning}
+$\beta$ \textbf{follows logically} from $\alpha$, written $\alpha \models
+\beta$ iff every model that satisfies $\alpha$ also satisfies $\beta$. $A \land
+\neg B$ follows logically from $A \Leftrightarrow \neg A \lor \neg B$.
+
+\paragraph{Example 1} We have one person, ``A''. A says ``I am a knight''.
+\subparagraph{How many models satisfy this sentence?} 2: {A = true} and {A =
+false}
+\subparagraph{What follows logically from this sentence?} $A \lor \neg A$
+
+\paragraph{Example 2} We have one person, ``B''. B says ``I am a knave.''
+\subparagraph{How many models satisfy this sentence?} There are no models as
+the sentence is contradictory. TODO is this right?
+
+\subsubsection{Logical Reasoning in the Wumpus World}
+\begin{tabular}{l l}
+$P_{x,y}$ & there is a pit in [x,y]\\
+$W_{x,y}$ & there is a wumpus in [x,y]\\
+$B_{x,y}$ & the agent perceives a breeze in [x,y]\\
+$S_{x,y}$ & the agent perceives a stench in [x,y]
+\end{tabular}
+
+TODO add image from lecture notes Logic slide 20
+
+\begin{itemize}
+    \item There is no pit in [1,1]:\\
+          $\neg P_{1,1}$
+    \item A breeze in [1,1] means there is a pit in [1,2] or [2,1]:\\
+          $B_{1,1} \Leftrightarrow P_{1,2} \lor P_{2,1}$
+    \item A breeze in [2,1] means there is a pit in [1,1], [2,2] or [3,1]:\\
+          $B_{2,1} \Leftrightarrow P_{1,1} \lor P_{2,2} \lor P_{3,1}$
+    \item The breeze percepts for the first two squares visited are:\\
+          $\neg B_{1,1}$ and $B_{2,1}$
+\end{itemize}
+
+The conjunction KB of the above 4 sentences is
+
+
+\begin{align*}
+    KB&: (\neg P_{1,1}) \land (B_{1,1} \Leftrightarrow P_{1,2} \lor
+          P_{2,1}) \land\\
+      &  \indent (B_{2,1} \Leftrightarrow P_{1,1} \lor P_{2,2} \lor P_{3,1}) \land
+          (\neg B_{1,1} \text{ and } B_{2,1})\\
+      &: (\neg P_{1,1}) \land (\neg (P_{1,2} \lor P_{2,1})) \land (P_{1,1}
+         \lor P_{2,2} \lor P_{3,1}) & \text{ because } \neg B_{1,1} \text{ and }
+         B_{2,1}\\
+      &: (\neg P_{1,2} \land \neg P_{2,1}) \land (\neg P_{1,1} \land P_{1,1}
+         \lor P_{2,2} \lor P_{3,1}) & \text{ by de Morgan's}\\
+      &: (\neg P_{1,2} \land \neg P_{2,1}) \land (P_{2,2} \lor P_{3,1})
+\end{align*}
+
+Thus,
+\begin{align*}
+    KB \models&(\neg P_{1,2} \land \neg P_{2,1}) \land (P_{2,2} \lor P_{3,1})\\
+    \text{or}\\
+    KB \models&\neg P_{2,1} \land (P_{2,2} \lor P_{3,1})
+\end{align*}
+
+\subsection{First-Order Logic}
+\subsubsection{Vocabulary}
+\begin{tabular}{l l}
+    Quantifiers         & $\forall, \exists$\\
+    Constants           & e.g. \texttt{richard, john}\\
+    Variables           & e.g. \texttt{X, Y, Z}\\
+    Predicates          & e.g. \texttt{king, married, loves}\\
+    Functions           & e.g. \texttt{father, mother}\\
+    Logical connectives & $\neg, \land, \lor, \Rightarrow, \Leftrightarrow$\\
+\end{tabular}
+
+The \textbf{arity} of a function or predicate is the number of arguments that
+can be supplied.
+
+A \textbf{term} can be a variable (X), a constant (richard), or a functional
+term (mother(father(john)).
+
+A \textbf{sentence} can be an atomic structure, e.g.
+\texttt{married(father(richard), mother(john))}, or a complex sentence, e.g.
+\texttt{$\forall$X $\exists$ Y loves(X,Y) $\Rightarrow$ $\exists$Y $\forall$X
+loves(X,Y)}
+
+\subsubsection{Other examples of First-Order Logic Sentences}
+TODO insert image from Logic slide 23
+
+\subsubsection{Semantics}
+The \textbf{Herbrand base} is the set of all atomic sentences without
+variables, e.g. \verb|{king(richard), king(john), married(richard,mother(john)), ...}|.
+
+In first-order logic, a \textbf{model} $\mathcal{M}$ fixes the truth value
+(true or false) for every element in the Herbrand base. From the above example,
+the model would be \verb|{king(richard)=true, king(john)=false, ...}|.
+
+\subsubsection{Logic Entailment}
+$\mathcal{M}$ satisfies a variable-free atomic sentence $p$ iff $p = \text{true} \in \mathcal{M}$\\
+$\mathcal{M}$ satisfies a sentence $\neg \alpha$ iff $\mathcal{M}$ does not satisfy $a$.\\
+$\mathcal{M}$ satisfies a sentence $\alpha \land \beta$ iff $\mathcal{M}$
+satisfies $\alpha$ and $\mathcal{M}$ satisfies $\beta$\\
+$\mathcal{M}$ satisfies a sentence $\alpha \lor \beta$ iff $\mathcal{M}$
+satisfies $\alpha$ or $\mathcal{M}$ satisfies $\beta$ or both.\\
+$\mathcal{M}$ satisfies a sentence $\alpha \Rightarrow \beta$ iff $\mathcal{M}$
+satisfies $\beta$ whenever $\mathcal{M}$ satisfies $\alpha$.\\
+$\mathcal{M}$ satisfies a sentence $\alpha \Leftrightarrow \beta$ iff
+$\mathcal{M}$ satisfies $\alpha$ if and only if $\mathcal{M}$ satisfies $\beta$\\\\
+$\mathcal{M}$ satisfies a sentence $\forall$X $\alpha$ iff $\mathcal{M}$
+satisfies $\alpha$\{X/t\}\footnote{$\alpha$\{X/t\} means replace each occurence of X by t in $\alpha$}
+for all variable-free terms t\\
+$\mathcal{M}$ satisfies a sentence $\exists$X $\alpha$ iff $\mathcal{M}$
+satisfies $\alpha$\{X/t\}\footnotemark[1] for some variable-free term t
+
+We say that $\beta$ \textbf{follows logically} from $\alpha$ ($\alpha \models
+\beta$) iff every model that satisfies $\alpha$ also satisfies $\beta$.
+
+\paragraph{Example A} Let $\alpha$ be the sentence \texttt{$\forall$X human(X)
+$\Rightarrow$ mortal(X)} (all humans are mortal)\\
+Let $\beta$ by the sentence \texttt{human(socrates)} (Socrates is human)
+
+
+$\mathcal{M}_1 = \texttt{\{human(socrates)=false, mortal(socrates)=false\}}$ satisfies
+$\alpha$ because Socrates is not human, and thus does not have to be mortal,
+but does not satisfy $\beta$.
+
+$\mathcal{M}_2 = \texttt{\{human(socrates)=true, mortal(socrates)=true\}}$ satisfies both
+$\alpha$ and $\beta$.
+
+$\mathcal{M}_2$ is the only possible model that satisfies $\alpha$ and $\beta$,
+i.e. $\alpha \land \beta \models mortal(socrates)$.
+
+\paragraph{Example B} Let $\alpha$ be the sentence \texttt{$\exists$X card(X) $\land$
+red(X)} (some cards are red)\\
+Let $\beta$ be the sentence \texttt{card($\heartsuit 7$) $\land$
+card($\clubsuit 8$)} ($\heartsuit 7$ and $\clubsuit 8$ are cards).
+
+\texttt{\{card($\heartsuit 7$)=true, card($\clubsuit 8$)=true, red($\heartsuit 7$)=true,
+red($\clubsuit 8$)=false\}} satisfies $\alpha \land \beta$.
+
+However, \texttt{\{card($\heartsuit 7$)=true, card($\clubsuit 8$)=true,
+red($\heartsuit 7$)=false, red($\clubsuit 8$)=true\}} also satisfies $\alpha \land \beta$.
+
+Hence, $\alpha \land \beta \not\models \texttt{red($\heartsuit 7$)}$
+
+\section{Applied Logic: Describing Games with GDL}
+The GDL uses the following keywords.
+
+\begin{tabular}{ l l }
+    role(r)       & r is a role (i.e. a player) in the game\\
+    init(f)       & f is true in the initial position or state\\
+    true(f)       & f is true in the current state\\
+    does(r,a)     & role r does action a in the current state\\
+    next(f)       & f is true in the next state\\
+    legal(r,a)    & is is legal for r to play a in the current state\\
+    goal(r,v)     & r gets goal value v in the current state\\
+    terminal      & the current state is a terminal state\\
+    distinct(s,t) & terms s and t are syntactically different\\
+\end{tabular}
+
+Like Prolog, all variables are implicitly universally quantified.
+
+\begin{lstlisting}[morekeywords={next, does}]
+next(cell(M,N,x)) $\Leftarrow$ does(xplayer,mark(M,N))
+
+means $\forall$M,N next(cell(M,N,x)) $\Leftarrow$ does(xplayer,mark(M,N))
+\end{lstlisting}
+
+\subsection{Example: Noughts and Crosses}
+\subsubsection{Constants}
+\begin{tabular}{ l l }
+    xplayer, oplayer & Players\\
+    x, o, b          & Marks\\
+    noop             & Move\\
+    0, 50, 100       & Scores\\
+\end{tabular}
+
+\subsubsection{Functions}
+\begin{tabular}{ l l l }
+    \textbf{Name} & \textbf{Arguments}\\
+    cell          & (number,number,mark) & Feature\\
+    control       & (player)             & Feature\\
+    mark          & (number,number)      & Move\\
+\end{tabular}
+
+\subsubsection{Predicates}
+\begin{tabular}{ l l }
+    row      & (number,mark)\\
+    column   & (number,mark)\\
+    diagonal & (mark)\\
+    line     & (mark)\\
+    open
+\end{tabular}
+
+\subsubsection{Players and initial state}
+\begin{lstlisting}[morekeywords={role,init}]
+role(xplayer)
+role(oplayer)
+
+init(cell(1,1,b))
+init(cell(1,2,b))
+init(cell(1,3,b))
+init(cell(2,1,b))
+init(cell(2,2,b))
+init(cell(2,3,b))
+init(cell(3,1,b))
+init(cell(3,2,b))
+init(cell(3,3,b))
+
+init(control(xplayer))
+\end{lstlisting}
+
+\subsubsection{Move Generator}
+Define the following sequence of facts as $\alpha$
+\begin{lstlisting}
+true(cell(1,1,x))
+true(cell(1,2,b))
+true(cell(1,3,b))
+true(cell(2,1,b))
+true(cell(2,2,o))
+true(cell(2,3,b))
+true(cell(3,1,b))
+true(cell(3,2,b))
+true(cell(3,3,x))
+true(control(oplayer))
+\end{lstlisting}
+
+Define the following rules as $\beta$
+\begin{lstlisting}[morekeywords={legal,true}]
+legal(W,mark(M,N)) $\Leftarrow$
+    true(cell(M,N,b)) $\land$
+    true(control(W))
+
+legal(xplayer,noop) $\Leftarrow$
+    true(control(oplayer))
+
+legal(oplayer,noop) $\Leftarrow$
+    true(control(xplayer))
+\end{lstlisting}
+
+We then have the following logical consequences:
+\begin{align*}
+    \alpha \land \beta &\models legal(xplayer,noop)\\
+    \alpha \land \beta &\models legal(oplayer,mark(1,2))\\
+    ...\\
+    \alpha \land \beta &\models legal(oplayer,mark(3,2))\\
+\end{align*}
+
+\subsubsection{Game Physics}
+At a high level, we can define states in Noughts and Crosses as follows:
+
+If a player marks a cell, that cell belongs to them in the next state ($R_1$)
+\begin{lstlisting}[morekeywords={next,does}]
+next(cell(M,N,x)) $\Leftarrow$ does(xplayer,mark(M,N))
+next(cell(M,N,o)) $\Leftarrow$ does(oplayer,mark(M,N))
+\end{lstlisting}
+
+As long as a player doesn't make an illegal move (moving in an occupied cell),
+the cells that currently belong to them will still belong to them on the next
+state. ($R_2$)
+\begin{lstlisting}[morekeywords={next,does,true,distinct}]
+next(cell(M,N,W)) $\Leftrightarrow$ does(W,mark(J,K)) $\land$
+                     true(cell(M,N,W)) $\land$
+                     (distinct(M,J) $\lor$ distinct(N,K))
+\end{lstlisting}
+
+On the next state, it will be the other player's turn ($R_3$)
+\begin{lstlisting}[morekeywords={next, true}]
+next(control(xplayer)) $\Leftarrow$ true(control(oplayer))
+next(control(oplayer)) $\Leftarrow$ true(control(xplayer))
+\end{lstlisting}
+
+In combination, the above rules have the following logical consequence(s):\\
+$R_1 \land R_2 \land R_3 \land \alpha \land does(xplayer, noop) \land
+does(oplayer,mark(1,3)) \models next(cell(1,3,o)) \land next(control(xplayer))
+\land ...$
+
+\subsubsection{Termination and Goal}
+\begin{lstlisting}[morekeywords={terminal,true}]
+terminal $\Leftarrow$ line(x)
+terminal $\Leftarrow$ line(o)
+terminal $\Leftarrow$ $\neg$open
+
+line(X) $\Leftarrow$ row(M,X)
+line(X) $\Leftarrow$ column(M,X)
+line(X) $\Leftarrow$ diagonal(X)
+
+open $\Leftarrow$ true(cell(M,N,b))
+\end{lstlisting}
+
+\begin{lstlisting}[morekeywords={goal}]
+goal(xplayer,100) $\Leftarrow$ line(x)
+goal(xplayer,50) $\Leftarrow$ $\neg$line(x) $\land$ $\neg$line(o) $\land$ $\neg$open
+goal(xplayer,0) $\Leftarrow$ line(o)
+
+goal(oplayer,100) $\Leftarrow$ line(o)
+goal(oplayer,50) $\Leftarrow$ $\neg$line(x) $\land$ $\neg$line(o) $\land$ $\neg$open
+goal(oplayer,0) $\Leftarrow$ line(x)
+\end{lstlisting}
+
+where
+\begin{lstlisting}[morekeywords={true}]
+row(M,X) $\Leftarrow$ true(cell(M,1,X)) $\land$ true(cell(M,2,X)) $\land$ true(cell(M,3,X))
+column(N,X) $\Leftarrow$ true(cell(1,N,X)) $\land$ true(cell(2,N,X)) $\land$ true(cell(3,N,X))
+diagonal(X) $\Leftarrow$ true(cell(1,1,X)) $\land$ true(cell(2,2,X)) $\land$ true(cell(3,3,X))
+diagonal(X) $\Leftarrow$ true(cell(1,3,X)) $\land$ true(cell(2,2,X)) $\land$ true(cell(3,1,X))
+\end{lstlisting}
+
+\section{Knowledge Interchange Format}
+Knowledge Interchange Format (KIF) is a standard for programmatic exchange of
+knowledge represented in relational logic.
+
+Syntax is prefix version of standard syntax, with some operators renamed (not,
+and, or). KIF is case-insensitive. Variables are prefixed with \verb|?|.
+
+\begin{lstlisting}
+GDL: r(X,Y) $\Leftarrow$ p(X,Y) $\land$ $\neg$q(Y)
+KIF: ($\Leftarrow$ (r ?x ?y) (and (p ?x ?y) (not (q ?y))))
+ or: ($\Leftarrow$ (r ?x ?y) (p ?x ?y) (not (q ?y)))
+\end{lstlisting}
+
+\subsection{Noughts And Crosses in KIF}
+\begin{multicols}{3}
+\begin{tiny}
+\begin{lstlisting}
+(role xplayer)
+(role oplayer)
+(init (cell 1 1 b))
+(init (cell 1 2 b))
+(init (cell 1 3 b))
+(init (cell 2 1 b))
+(init (cell 2 2 b))
+(init (cell 2 3 b))
+(init (cell 3 1 b))
+(init (cell 3 2 b))
+(init (cell 3 3 b))
+(init (control xplayer))
+
+(<= (next (cell ?m ?n x))
+    (does xplayer (mark ?m ?n))
+(<= (next (cell ?m ?n o))
+    (does oplayer (mark ?m ?n))
+(<= (next (cell ?m ?n b))
+    (does ?w (mark ?j ?k))
+    (true (cell ?m ?n b))
+    (or (distinct ?m ?j)
+        (distinct ?n ?k)))
+(<= (next (control xplayer))
+    (true (control oplayer)))
+(<= (next (control oplayer))
+    (true (control xplayer)))
+
+(<= (legal ?w (mark ?m ?n))
+    (true (cell ?m ?n b))
+    (true (control ?w)))
+(<= (legal xplayer noop)
+    (true (control oplayer)))
+(<= (legal oplayer noop)
+    (true (control xplayer)))
+
+(<= (row ?m ?x)
+    (true (cell ?m 1 ?x))
+    (true (cell ?m 2 ?x))
+    (true (cell ?m 3 ?x)))
+(<= (column ?n ?w)
+    (true (cell 1 ?n ?x))
+    (true (cell 2 ?n ?x))
+    (true (cell 3 ?n ?x)))
+(<= (diagonal ?x)
+    (true (cell 1 1 ?x))
+    (true (cell 2 2 ?x))
+    (true (cell 3 3 ?x)))
+(<= (diagonal ?x)
+    (true (cell 1 3 ?x))
+    (true (cell 2 2 ?x))
+    (true (cell 3 1 ?x)))
+
+(<= (line ?x) (row ?m ?x))
+(<= (line ?x) (column ?n ?x))
+(<= (line ?x) (diagonal ?x))
+
+<= open
+    (true (cell ?m ?n b)))
+
+(<= terminal (line x))
+(<= terminal (line o))
+(<= terminal (not open))
+
+(<= (goal xplayer 100)
+    (line x))
+(<= (goal xplayer 50)
+    (not (line x))
+    (not (line o))
+    (not open))
+(<= (goal xplayer 0)
+    (line o))
+(<= (goal oplayer 100)
+    (line o))
+(<= (goal oplayer 50)
+    (not (line x))
+    (not (line o))
+    (not open))
+(<= (goal oplayer 0)
+    (line x))
+\end{lstlisting}
+\end{tiny}
+\end{multicols}
+
+\section{Inference}
+We will cover inference algorithms for propositional logic, and inference
+algorithms for first-order logic.
+
+\subsection{Propositional Inference: Example}
+Assumptions: knights always tell the truth, knaves always lie.
+
+We have two people, A and B. A says ``one of us is a knave''.
+
+It follows that A is a knight and B is a knave.
+
+A $\leftrightarrow$ A is a knight
+B $\leftrightarrow$ B is a knight
+
+A $\Leftrightarrow$ $\neg$A $\lor$ $\neg$B $\models$ A $\land$ $\neg$B
+
+\subsection{Converting a sentence to CNF}
+A \textbf{literal} is an atomic sentence or its negation.\\
+A \textbf{clause} is a disjunction of literals.\\
+A sentence is \textbf{conjunctive normal form} (CNF) is a conjunction of
+clauses.
+
+To convert a propositional sentence into CNF:
+\begin{itemize}
+    \item eliminate $\Leftrightarrow$ by replacing $\alpha \Leftrightarrow \beta$ with $(\alpha \Rightarrow \beta) \land (\beta \Rightarrow \alpha)$
+    \item eliminate $\Rightarrow$ by replacing $\alpha \Rightarrow \beta$ vith $\neg \alpha \lor \beta$
+    \item move $\neg$ inwards by repeated application of
+        \begin{itemize}
+            \item $\neg\neg\alpha \equiv \alpha$ (double negation elimination)
+            \item $\neg(\alpha \land \beta) \equiv (\neg\alpha \lor \neg\beta)$ (de Morgan rule)
+            \item $\neg(\alpha \lor \beta) \equiv (\neg\alpha \land \neg\beta)$ (de Morgan rule)
+        \end{itemize}
+    \item Apply distributivity laws whenever possible
+        \begin{itemize}
+            \item $\alpha \land (\beta \lor \gamma) \equiv ((\alpha \land \beta)\lor(\alpha\land\gamma))$
+            \item $\alpha \lor (\beta \land \gamma) \equiv ((\alpha \lor \beta) \land (\alpha \lor \gamma))$
+        \end{itemize}
+\end{itemize}
+
+\subsection{A Possible Resolution Algorithm}
+\textbf{Resolution} uses the principle of proof by contradiction: $\alpha
+\models \beta$ iff $\alpha \land \neg \beta$ is unsatisfiable.
+
+\begin{enumerate}
+    \item Convert $\alpha \land \neg \beta$ to CNF
+    \item Repeatedly apply the resolution rule
+        (\url{http://en.wikipedia.org/wiki/Resolution_(logic)#Resolution_in_propositional_logic} that takes two clauses as input
+        and produces a new clause
+    \item If the resolution rule produces the empty clause we have no conflict,
+        and so $\beta$ follows from $\alpha$.
+    \item Otherwise, if there are no more new clauses, then $\beta$ does not
+        follow from $\alpha$.
+\end{enumerate}
+
+\subsubsection{Example}
+A says ``one of us in a knave'' Does it follow that A is a knight and B is a
+knave?
+
+Prove that A $\Leftrightarrow$ $\neg$A $\lor$ $\neg$B $\models$ A $\land$ $\neg$B
+
+Prove that (A $\Leftrightarrow$ $\neg$A $\lor$ $\neg$B) $\land$ $\neg$(A $\land$ $\neg$B) is unsatisfiable.
+
+Convert to CNF:
+
+\begin{lstlisting}
+(A $\Leftrightarrow$ $\neg$A $\lor$ $\neg$B) $\land$ $\neg$(A $\land$ $\neg$B)
+((A $\Rightarrow$ $\neg$A $\lor$ $\neg$B) $\land$ ($\neg$A $\lor$ $\neg$B $\Rightarrow$ A)) $\land$ $\neg$(A $\land$ $\neg$B)
+(($\neg$A $\lor$ ($\neg$A $\lor$ $\neg$B)) $\land$ ($\neg$($\neg$A $\lor$ $\neg$B) $\lor$ A)) $\land$ $\neg$(A $\land$ $\neg$B)
+($\neg$A $\lor$ $\neg$B) $\land$ A $\land$ ($\neg$A $\lor$ B)
+$\neg$B $\land$ A $\land$ B
+B $\land$ $\neg$B $\land$ A
+\end{lstlisting}
+
+which is a contradiction.
+
+Thus we have shown that (A $\Leftrightarrow$ $\neg$A $\lor$ $\neg$B) $\land$
+$\neg$(A $\land$ $\neg$B) is unsatisfiable.
+
+And so A $\Leftrightarrow$ $\neg$A $\lor$ $\neg$B $\models$ A $\land$ $\neg$B.
+
+\subsection{First-Order Resolution for Logic Programs/GDL}
+Given
+\begin{lstlisting}
+true(cell(1,1,b))
+...
+true(cell(3,3,b))
+true(control(xplayer))
+
+legal(P,mark(M,N)) <= true(cell(M,N,b)) ∧ true(control(P))
+legal(xplayer,noop) <= true(control(oplayer))
+legal(oplayer,noop) <= true(control(xplayer))
+\end{lstlisting}
+
+answer the query \verb|?- legal(xplayer,M)|
+
+\begin{lstlisting}
+(true(control(oplayer)) $\land$ M = noop) $\lor$
+    (true(control(xplayer)) $\land$ M = mark(M,N) $\land$ cell(M,N,b))
+    $\Rightarrow$ legal(xplayer,M)
+
+(control(xplayer) $\land$ mark(M,N) $\land$ cell(M,N,b))
+    $\Rightarrow$ legal(xplayer,M)
+
+control(xplayer) $\land$ (M = mark(M,N) $\land$ cell(M,N,b)
+                   $\Rightarrow$ legal(xplayer,M)
+\end{lstlisting}
+
+And, since \verb|control(xplayer) = true| we have
+
+\begin{lstlisting}
+M = mark(1,1)
+M = mark(1,2)
+M = mark(1,3)
+M = mark(2,1)
+..
+..
+M = mark(3,2)
+M = mark(3,3)
+\end{lstlisting}
+
+\subsubsection{Substitutions}
+To compute logical consequences you need
+\begin{enumerate}
+    \item unification: using substitutions in order to match two expressions
+    \item resolution steps (a single derivation step)
+    \item derivations (computing a result for a query)
+\end{enumerate}
+
+A \textbf{substitution} is a finite set of replacements of variables by terms,
+e.g. \{X/a, Y/f(b), V/W\}
+
+The result of applying a substitution $\Theta$ to an expression $p$ is the
+expression SUBST($\Theta$, $p$) obtained from $p$ by replacing every occurrence
+of every variable in the substitution by its replacement.
+
+\texttt{SUBST(\{X/a, Y/f(b), V/W\}, p(X,X,Y,Z)) = p(a,a,f(b),Z)}
+
+\subsubsection{Unification}
+A substitution $\Theta$ is a \textbf{unifier} for an expression $p$ and an
+expression $q$ iff SUBST($\Theta$, $p$) = SUBST($\Theta$, $q$).
+\begin{lstlisting}
+SUBST(\{M/1,N/3,X/3\},mark(M,N)) = mark(1,3)
+SUBST(\{M/1,N/3,X/3\},mark(1,X)) = mark(1,3)
+\end{lstlisting}
+
+If two expressions have a unifier, we say they are \textbf{unifiable}.
+mark(X,X) and mark(1,3) are not unifiable.
+
+\subsubsection{Most General Unifiers}
+A substitution $\Theta$ is \textbf{more general} than a substitution $\theta$
+iff $\Theta$ places fewer restrictions than $\theta$ on the values of
+variables.
+
+A substitution is a \textbf{most general unifier} (mgu) of two expressions iff
+it is more general than any other unifier.
+
+\paragraph{Theorem} If two expressions are unifiable, then they have an mgu
+that is unique up to variable permutation.
+\begin{lstlisting}
+SUBST({M/1,N/X},mark(M,N)) = mark(1,X)
+SUBST({M/1,N/X},mark(1,X)) = mark(1,X)
+
+SUBST({M/1,X/N},mark(M,N)) = mark(1,N)
+SUBST({M/1,X/N),mark(1,X)) = mark(1,N)
+\end{lstlisting}
+
+\subsubsection{Resolution Step for Queries + Logic Program Clauses}
+\begin{align*}
+    \text{Given:} & \text{Query } L_1 \land L_2 \land ... \land L_m & \text{(without negation)}\\
+                  & \text{clauses}                          & \text{(without negation)}\\
+\\
+    \text{Let:}   & A \Leftarrow B_1 \land ... \land B_n          & \text{``fresh'' variant of clause}\\
+                  & \Theta                                  & \text{mgu of $L_1$ and A}\\
+\\
+    \text{Then:}  & L_1 \land L_2 \land ... \land L_m \rightarrow \text{SUBST($\Theta$,$B_1 \land ... \land B_n \land L_2 \land ... \land L_m$)} & \text{is a \textbf{resolution step}}\\
+\end{align*}
+
+\paragraph{Example}
+\begin{lstlisting}
+legal(P5,mark(M5,N5)) $\Leftarrow$ true(cell(M5,N5,b)) $\land$ true(control(P5))
+
+legal(xplayer,M) $\rightarrow$ with $\Theta$ = {P5/xplayer,M/mark(M5,N5)}
+
+true(cell(M5,N5,b)) $\land$ true(control(xplayer))
+\end{lstlisting}
+
+\subsubsection{Derivation 1: Query Answering}
+A sequence of resolution steps is called a \textbf{derivation}. A
+\textbf{successful} derivation ends with the empty query ($\square$).
+
+The \textbf{answer substitution} (computed by a successful derivation) is
+obtained by composing the mgu's $\Theta_1 \circ ... \circ \Theta_n$ of each
+step (and restricting the result to the variables in the original query).
+
+A \textbf{failed} derivation ends with a query to which no clause applies.
+
+\paragraph{Example}
+\begin{lstlisting}
+true(cell(1,1,b))
+...
+true(cell(3,3,b))
+true(control(xplayer)
+
+legal(P,mark(M,N)) $\Leftarrow$ true(cell(M,N,b)) $\land$ true(control(P))
+legal(xplayer,noop) $\Leftarrow$ true(control(oplayer))
+legal(oplayer,noop) $\Leftarrow$ true(control(xplayer))
+
+legal(xplayer,M)
+    $\rightarrow$ with $\Theta_1$ = {P5/xplayer,M/mark(M5,N5)}
+true(cell(M5,N5,b)) $\land$ true(control(xplayer))
+    $\rightarrow$ with $\Theta_2$ = {M5/1,N5/1}
+true(control(xplayer))
+    $\rightarrow$ with $\Theta_3$ = {}
+$\square$, with answer substitution {M/mark(1,1)}
+\end{lstlisting}
+
+The query \verb|?- legal(xplayer,M)| has 9 successful derivations, with the
+following answers:
+
+\begin{lstlisting}
+{M/mark(1,1)}
+...
+{M/mark(3,3)}
+\end{lstlisting}
+
+The query \verb|?- legal(oplayer,M)| has 1 successful derivation, with the
+answer \verb|{M/noop}|.
+
+\subsubsection{Derivation 2: Query Answering with Negation}
+Given a query $L_1 \land L_2 \land ... \land L_m$ and clauses:
+\begin{itemize}
+    \item If $L_1$ is an atom, proceed as before
+    \item If $L_1$ is of the form $\neg$A
+        \begin{itemize}
+            \item if all derivations for A fail then\\
+                $\neg A \land L_2 \land ... \land L_m \rightarrow L_2 \land ...
+                \land L_m$
+            \item if there is a successful derivation for A then\\
+                $\neg A \land L_2 \land ... \land L_m \rightarrow$ fail
+        \end{itemize}
+\end{itemize}
+
+\paragraph{Example}
+\begin{lstlisting}
+role(red)
+role(blue)
+role(green)
+true(freecell(blue))
+trapped(P) $\Leftarrow$ role(P) $\land$ $\neg$true(freecell(P))
+goal(P,100) $\Leftarrow$ role(P) $\land$ $\neg$trapped(P)
+
+goal(P,100) $\rightarrow$ role(P) $\land$ $\neg$trapped(P) $\rightarrow$ $\neg$trapped(blue)
+  and
+    trapped(blue) $\rightarrow$ role(blue) $\land$ $\neg$true(freecell(blue))
+  but we have true(freecell(blue)) so trapped(blue) fails
+
+as such, we have goal(P,100) $\rightarrow$ role(P) $\land$ $\neg$[fails]
+\end{lstlisting}
+
+and so the answer substitution is \verb|{P/blue}|, which is the only answer to
+this query.
+
+\subsubsection{Derivation 3: Query Answering with Disjunction}
+A GDL/Prolog rule with a disjunction\\
+\indent A $\Leftarrow$ $B \land (C_1 \lor C_2) \land D$\\
+is logically equivalent to the conjunction of the clauses\\
+\indent A $\Leftarrow$ $B \land C_1 \land D$\\
+\indent A $\Leftarrow$ $B \land C_2 \land D$\\
+
+As such,\\
+\indent line(W) $\Leftarrow$ row(M,W) $\lor$ column(N,W) $\lor$ diagonal(W)\\
+is logically equivalent to
+\begin{lstlisting}
+line(W) $\Leftarrow$ row(M,W)
+line(W) $\Leftarrow$ column(N,W)
+line(W) $\Leftarrow$ diagonal(W)
+\end{lstlisting}
+
+\section[Logic in Action]{Logic in Action: Inference Tasks for General Game-Playing Agents}
+Let KB be the logical description of a game.
+\begin{enumerate}
+    \item To infer the initial position, compute all answers to KB $\models$ init(F)
+    \item To infer the legal moves of player $p$ in a given state
+        $\{f_1,...,f_n\}$ compute all answers to KB $\land true(f_1) \land ...
+        \land true(f_n) \models legal(p,M)$
+    \item To infer the next state from a given state and moves, compute al
+        answers to KB $\land true(f_1) \land ... \land true(f_n) \land
+        does(p_1,f_1) \land ... \land does(p_n,f_n) \models$ next(F)
+    \item To check if a state is terminal: KB $\land true(f_1) \land ... \land
+        true(f_n) \models$ terminal
+    \item To compute player $p$'s goal value: KB $\land true(f_1) \land ...
+        \land true(f_n) \models$ goal(p,N)
+\end{enumerate}

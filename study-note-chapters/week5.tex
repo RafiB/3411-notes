@@ -188,7 +188,7 @@ the actual solution.
 Simulated annealing is stochastic hill-climbing based on the difference between
 evaluation of previous state $h_0$ and new state $h_1$. If $h_1 < h_0$ then
 definitely make the change, otherwise make the change with probability
-$e^{-(h_1-h_0)/T}$ where $T$ is a "temperature" parameter.
+$e^{-(h_1-h_0)/T}$ where $T$ is a ``temperature'' parameter.
 
 Simulated annealing reduces to ordinary hill climbing when $T = 0$, and becomes
 random when $T \rightarrow \infty$. Sometimes, we gradually decrease the
@@ -231,8 +231,8 @@ correlation goes something like this (source:
 A crossover, representing inheritance of genes, can be done in different ways.
 
 You can use a one-point crossover, where additions to the population are
-modified by taking parts of two 'parents'. We choose some arbitrary point in
-the string and the 'children' become products of the parent strings, like so:
+modified by taking parts of two ``parents''. We choose some arbitrary point in
+the string and the ``children'' become products of the parent strings, like so:
 
 \underline{11101}001000 00001\underline{010101} become \underline{11101010101} and 00001001000
 
@@ -257,3 +257,16 @@ well.
 
 \subsection{Lindenmayer System}
 TODO what is this? :P
+
+\section{Now and the Future}
+\subsection{Grammatical Evolution}
+Evolution of programs in C, Lisp, Verilog, Assembler
+
+\subsection{Hierarchical Evolutionary Re-Combination (HERCL)}
+Scaling up to larger problems
+
+Modularity and evolution
+
+Credit-assignment problem
+
+Transfer from task to task

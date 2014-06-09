@@ -2,7 +2,7 @@
 \chapter{Games}
 
 \section{Why Games?}
-Games have "unpredictable" opponents $\Rightarrow$ solution is a strategy.
+Games have ``unpredictable'' opponents $\Rightarrow$ solution is a strategy.
 
 Time limits $\Rightarrow$ must rely on approximation (tradeoff between speed
 and accuracy).
@@ -74,7 +74,7 @@ Time complexity?\\
 Space complexity?
 
 \subsection{Reducing the Search Effort}
-For chess, $b \approx 35, m \approx 100$ for "reasonable" games $\Rightarrow$
+For chess, $b \approx 35, m \approx 100$ for ``reasonable'' games $\Rightarrow$
 exact solution is completely infeasible.
 
 There are two ways to make the search feasible:
@@ -143,10 +143,10 @@ $\beta$ is the best value for opponent found so far, off the current path
 If we find a move whose value exceeds $\alpha$, pass this new value up the
 tree.
 
-If the current node value exceeds $\beta$, it is "too good to be true", so we
-"prune off" the remaining children.
+If the current node value exceeds $\beta$, it is ``too good to be true'', so we
+``prune off'' the remaining children.
 
-TODO CAN SOMEONE EXPLAIN THIS? how is it "too good to be true"? what does that mean?
+TODO CAN SOMEONE EXPLAIN THIS? how is it ``too good to be true''? what does that mean?
 lecture slides 6 Games, page 28
 
 \paragraph{Properties of $\alpha-\beta$}
@@ -168,7 +168,7 @@ Deep Blue defeated world champion Gary Kasparov in a six-game match in 1997.
 
 Traditionally, computers played well in the opening (using a database) and in
 the endgame (by deep search DEFINITION FOR DEEP SEARCH PLZ) but humans could
-beat them in the middle game by "opening up" the board to increase the
+beat them in the middle game by ``opening up'' the board to increase the
 branching factor. Kasparov tried this, but Deep Blue was so fast that it was
 still able to in.
 
@@ -198,10 +198,10 @@ difficult.
 Traditional Go programs broke the board into regions and used pattern knowledge
 to explore each region.
 
-Since 2006, new "Monte Carlo" players have developed using UCB search (TODO WHAT
+Since 2006, new ``Monte Carlo'' players have developed using UCB search (TODO WHAT
 EVEN IS THIS?). A tree is built up stochastically. After a small number of
 moves, the rest of the game is played out randomly, using fast pattern matching
-to give prefence to "urgent" moves. Results of random playouts are used to
+to give prefence to ``urgent'' moves. Results of random playouts are used to
 update statistics on early positions.
 
 Computers are now competitive with humans on 9x9 boards, but humans still have
