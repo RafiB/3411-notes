@@ -1,0 +1,250 @@
+\part{Week 8}
+\chapter{Learning and Decision Trees}
+\section{Learning Agents}
+This is a callback to early in the course:
+
+TODO insert image from slide 1, Learning
+
+\section{Types of Learning}
+\subsection{Supervised Learning}
+The agent is presented with examples of inputs and their target outputs
+
+We have a training set and a test set, each consisting of a set of items; for
+each item, a number of input attributes and a target value are specified.
+
+The aim is to predict the target value, based on the input attributes.
+
+The agent is presented with the input and target output for each item in the
+training set; it must then predict the output for each item in the test set.
+
+Various learning paradigms are available:
+\begin{itemize}
+    \item Decision Tree
+    \item Neural Network
+    \item Support Vector Machine
+\end{itemize}
+
+\subsubsection{Issues with Supervised Learning}
+\begin{itemize}
+    \item framework (decision tree, neural network, SVM, etc.)
+    \item representation (of inputs and outputs)
+    \item pre-processing / post-processing
+    \item training method (perceptron learning, back-propagation, etc.)
+    \item generalization (avoid over-fitting)
+    \item evaluation (separate training and testing sets)
+\end{itemize}
+
+\subsubsection{Curve Fitting}
+Which curve gives the ``best fit`` for data? A straight line? Parabola? 4th
+order polynomial? something else?
+
+TODO insert image from slide 5-9, Learning.
+
+\paragraph{Ockham's Razor} is a principle which states ``the most likely
+hypothesis is the simplest one consistent with observed data.''
+
+Since there can be noise in measurements, we need to make a tradeoff between
+simplicity of the hypothesis and how well it fits the data.
+
+TODO insert image from slide 10, Learning.
+
+TODO what is going on with restaurant stuff on slides 13, 14?
+
+\subsubsection{Generalisation}
+Provided the training data are not inconsistent, we can split the attributes in
+any order and still produce a tree that correctly classifies all examples in
+the training set.
+
+However, we really want a tree which is likely to generalize to correctly
+classify the [unseen] examples in the test set.
+
+In view of Ockham's Razor, we prefer a simpler hypothesis, i.e. a smaller tree.
+
+But how can be choose attributes in order to produce a small tree?
+
+\paragraph{Choosing an Attribute}
+Patrons is a ``more informative'' attribute than Type, because it splits the
+examples more nearly into sets that are ``all positive'' or ``all negative''.
+
+This notion of ``informativeness'' can be quantified using the mathematical
+concept of entropy, A parsimonious tree can be built by minimizing the entropy
+at each step.
+
+\paragraph{Entropy}
+Entropy is the measure of how much information we gain when the target
+attribute is revealed to us. In other words, it is not a measure of how much me
+know, but a measure of how much we don't know.
+
+If the prior probabilities of the $n$ target attribute values are $p_1,...,p_n$
+then the entropy is
+
+{\centering
+    $H(\langle p_1,...,p_n\rangle) = \sum_{i=1}^{n} -p_i\log_2p_i$
+
+}
+
+Entropy is the number of bits per symbol achieved by a (block) Huffman Coding
+scheme. For example, $H(\langle 0.5, 0.5 \rangle)$ = 1 bit, $H(\langle 0.5,
+0.25, 0.25\rangle)$ = 1.5 bits.
+
+Suppose we have $p$ positive and $n$ negative examples at a node. To classify a
+new example, $H(\langle \frac{p}{p+n}, \frac{n}{p+n}\rangle)$ bits are needed.
+
+An attribute splits the examples $E$ into subsets $E_i$, each of which needs
+less information to complete the classification.
+
+Let $E_i$ have $p_i$ positive and $n_i$ negative examples. $H(\langle
+\frac{p_i}{p_i + n_i}, \frac{n_i}{p_i + n_i} \rangle)$ bits are needed to
+classify a new example. The expected number of bits per example over all
+branches is
+
+{\centering
+    $\sum_i \frac{p_i + n_i}{p + n} H(\langle \frac{p_i}{p_i + n_i},
+    \frac{n_i}{p_i + n_i} \rangle)$
+
+}
+
+\paragraph{Laplace Error and Pruning}
+According to Ockham's Razor, we may wish to pune off branches that do not
+provide much benefit to classifying the items.
+
+When a node becomes a leaf, all items will be assigned to the majority class at
+that node. We can estimate the error rate on the (unseen) test items using the
+Laplace error:
+
+{\centering
+    $E = 1 - \frac{n + 1}{N + k}$
+
+}
+
+$N$ = total number of traning items at the node
+$n$ = number of training items in the majority class
+$k$ = number of classes
+
+If the average Laplace error of the children exceeds that of the parent node,
+we prune off the children.
+
+\paragraph{Minimal Error Pruning}
+TODO what is going on on slide 22, Learning.
+
+\subsubsection{Learning Actions}
+Supervised Learning can be used to learn Actions, if we construct a training
+set of situation-action pairs (called Behavioural Cloning).
+
+It is not always easy, appropriate, or even possible to provide a ``training
+set''. Examples include
+\begin{itemize}
+    \item optimal control (mobile robots, pole balancing, flying a helicopter)
+    \item resource allocation (job shop scheduling, mobile phone channel
+        allocation)
+    \item mix of allocation and contol (elevator control, backgammon, ...)
+\end{itemize}
+
+\subsection{Reinforcement Learning}
+Agent is not presented with target outputs, but is given a reward signal which
+it aims to maximize
+
+\subsubsection{Framework}
+An agent interacts with its environment. There is a set $S$ of states and a set
+$A$ of actions.
+
+At each time step $t$, the agent is in some state $s_t$. It must choose an
+action $a_t$, whereupon it goes into state $s_{t+1} = \delta(s_t, a_t)$ and
+receives reward $r(s_t, a_t)$.
+
+In general, $r()$ and $\delta()$ can be multi-valued, with a random element.
+
+The aim is to find an optimal \textbf{policy} $\pi : S \rightarrow A$ which
+will maximize the cumulative reward.
+
+\subsubsection{Models of optimality}
+
+\begin{tabular}{l l}
+    Finite horizon reward      & $\sum_{i = 0}^h r_{t+i}$\\\\
+    Average reward             & $\lim_{h \rightarrow \infty} \frac{1}{h} \sum_{i = 0}^{h-1} r_{t+i}$\\\\
+    Infinite discounted reward & $\sum_{i = 0}^{\infty} \gamma^i r_{t+i}$, $0 \leq \gamma < 1$
+\end{tabular}
+
+TODO insert image from slide 10, Reinforcement.
+
+Finite horizon reward is computationally simple.
+
+Infinite discounted reward is easier for proving theorems
+
+Average reward is hard to deal with, because can't sensibly choose between
+small reward and large reward very far in the future.
+
+\subsubsection{Value Function}
+For each state $s \in S$, let $V^*(s)$ be the maximum discounted reward
+obtainable from $s$.
+
+TODO insert image from slide 11, Reinforcement.
+
+Learning the Value Function can help to determine the optimal strategy.
+
+\subsubsection{Environment Types}
+
+Environments can be passive or stochastic, active and deterministic (e.g.
+Chess), and active and stochastic (e.g. backgammon).
+
+Active, stochastic environments introduce the K-armed Bandit Problem. Imagine
+being in a room with several friendly slot machines, for a limited time, and
+trying to maximize the payout. Each action (slot machine) provides a different
+average reward.
+
+Most of the time, we should choose the action that we think is best (highest
+average reward), but in order to ensure convergence to the optimal strategy, we
+must occasionally choose something different from our preferred action. A
+simple solution can be choosing a random action $5\%$ of the time. Something
+more strategic would be using a Bolzmann distribution to choose the next
+action: $P(a) = \frac{e^{\hat{V}(a)/T}}{\sum_{b \in A} e^{\hat{V}(b)/T}}$
+
+\subsubsection{Delayed Learning}
+TODO what. :P
+
+\subsubsection{Temporal Difference Learning}
+TD(0) (also called AHC or Widrow-Hodd Rule): $\hat{V}(s) \leftarrow \hat{V}(s)
++ \eta[r(s,a) + \gamma\hat{V}(\delta(s,a)) - \hat{V}(s)]$, where $\eta$ is the
+learning rate.
+
+The (discounted) value of the next state, plus the immediate reward, is used as
+the target value for the current state.
+
+A more sophisticated version, called TD($\lambda$), uses a weighted average of
+future states.
+
+\subsubsection{Q-Learning}
+
+For each $s \in S$, let $V^*(s)$ be the maximum discounted reward obtainable
+from $s$, and let $Q(s,a)$ be the discounted reward available by first doing
+action $a$ and then acting optimally.
+
+The optimal policy is $\pi^*(s) = argmax_a Q(s,a)$, where $Q(s,a) = r(s,a) +
+\gamma V^{*}(\delta(s,a))$
+
+then we have $V^*(s) = max_a Q(s,a)$, so $Q(s,a) = r(s,a) + \delta max_B
+Q(\delta(s,a),b)$
+
+which allows us to iteratively approximate $Q$ by $\hat{Q}(s,a) \leftarrow r +
+\delta max_b \hat{Q}(\delta(s,a),b)$.
+
+\subsubsection{Theoretical Results}
+Theorem a: Q-Learning will eventually converge to the optimal policy, for any
+deterministic Markov decision process, assuming an appropriately randomized
+strategy. (Watkins and Dayan 1992)
+
+Theorem b: TD-Learning will also converge, with probability 1. (Sutton 1988,
+Dayan 1992, Dayan \& Sejnowski 1994).
+
+There are limitations on theoretical results, however. We have delayed
+reinforcement (reward resulting from an action may not be received until
+several time steps later, which also slows down the learning). The search space
+must be finite; convergence is slow if the state space is large, and it relies
+on visiting every state infinitely often.
+
+For ``real world'' problems, we can't rely on a lookup table. We need to have
+some kind of generalization.
+
+\subsection{Unsupervised Learning}
+Agent is only presented with inputs, and aims to find structure in these
+inputs.

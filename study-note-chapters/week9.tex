@@ -1,0 +1,465 @@
+\part{Week 9}
+\chapter{Perceptrons}
+\section{Neural Networks}
+Neural networks in brains are networks made of neurons. Neurons are cells with
+a cell body (soma), dendrites (inputs), an axon (outputs), and synapses
+(connections between cells). Synapses can be exitatory or inhibitory, and may
+change over time.
+
+When inputs reach a certain threshold an action potential (electrical pulse) is
+sent along the axon to the outputs.
+
+The human brain has 100 billion neurons, with an average of 10,000 synapses
+each.
+
+Artificial neural networks are made up of nodes. Nodes have input edges
+(weighted), output edges (also weighted), and an activation level, which is a
+function of the inputs.
+
+Weights can be positive or negative and may change over time (as a result of
+learning). The input function is a weighted sum of the activation levels of
+inputs, and the activation level is a non-linear transfer function $g$ of this
+input:
+
+{\centering
+    activation$_i = g(s_i) = g(\sum_j w_{ij}x_j)$
+
+}
+
+Some nodes are inputs (sensing), some are outputs (action).
+
+\section{Rosenblatt Perceptron}
+TODO insert image from slide 10, Perceptrons.
+
+A Rosenblatt Perceptron has inputs ($x_1, x_2$) and weights ($w_1, w_2$). A
+bias weight is also included ($w_0$), with a corresponding input ($1$).
+Finally, we have a threshold, $th$. We take $w_0 = -th$.
+
+Inputs are summed
+\begin{align*}
+    s &= w_1x_1 + w_2x_2 + w_0\\
+      &= w_1x_1 + w_2x_2 - th
+\end{align*}
+
+and passed to the transfer function $g$ to get some output $g(s)$.
+
+\subsection{Transfer Function}
+A discontinuous step function was originally used for the transfer function
+
+\begin{displaymath}
+    g(s) = \left\{
+        \begin{array}{lr}
+            1, & \text{if } s \geq 0\\
+            0, & \text{if } s < 0
+        \end{array}
+    \right.
+\end{displaymath}
+
+Later, other transfer functions were introduced, which are continious and
+smooth.
+
+\section{Perceptron Learning}
+Perceptrons can compute linearly separable functions, e.g. AND, OR, NOR.
+
+\subsection{Perceptron Learning Rule}
+We can train a perceptron to learn a new function by adjusting weights as each
+input is presented.
+
+In our previous example, we had $s = w_1x_1 + w_2x_2 + w_0$.
+
+If $g(s) = 0$ but should be $1$,
+\begin{align*}
+    w_k & \leftarrow w_k + \eta x_k\\
+    w_0 & \leftarrow w_0 + \eta
+\end{align*}
+
+so we get $s \leftarrow s + \eta(1 + \sum_k x_k^2)$.
+
+If $g(s) = 1$ but should be $0$,
+\begin{align*}
+    w_k & \leftarrow w_k - \eta x_k\\
+    w_0 & \leftarrow w_0 - \eta
+\end{align*}
+
+so we get $s - \eta(1 + \sum_k x_k^2)$.
+
+otherwise, the weights are unchanged. (note, $\eta$ is the learning rate).
+
+Theorem: this will eventually learn to classify data correctly, as long as they
+are linearly separable.
+
+There is a large limitation on perceptron learning, which is that many useful
+functions are not linearly separable (e.g. XOR). One possible solution is to
+split the required function up into other functions that can be implemented by
+perceptrons. For example, $x_1$ XOR $x_2$ can be written as ($x_1$ AND $x_2$)
+NOR ($x_1$ NOR $x_2$).
+
+To implement a function like XOR, we use multi-layer neural networks
+
+TODO insert image from slide 20, Perceptrons.
+
+\chapter{Neural Networks}
+To train a neural network to learn a new function, the key idea is to replace
+the discontinuous step function with a differentiable function, such as the
+sigmoid:
+{\centering
+    $g(s) = \frac{1}{1 + e^{-s}}$
+
+}
+
+or hyperbolic tangent
+{\centering
+    $g(s) = \tanh(s) = \frac{e^s - e^{-s}}{e^s + e^{-s}} = 2(\frac{1}{1 + e^{-2s}}) - 1$
+
+}
+
+We use a forward pass as we did with simple perceptrons: weights, biases and
+values are passed through multiple layers to get a final output value.
+
+TODO insert image from slide 5, NeuralNets
+
+\section{Gradient Descent}
+We include an error function $E$ to define an error `landscape' on the weight
+space. The aim is to find a set of weights for which $E$ is very low. This is
+done by moving in the steepest downhill direction; $w \leftarrow w - \eta
+\frac{\partial E}{\partial w}$, where $E = \frac{1}{2} \sum (z - t)^2$. In
+words, the error function is half of the sum over all input patterns of the
+square of the difference between actual output and desired output. As always,
+we are using $\eta$ as the learning rate.
+
+This method is called ``Gradient Descent''.
+
+\section{Chain Rule}
+First, recall the chain rule. If we have
+\begin{align*}
+    y &= y(u)\\
+    u &= u(x)
+\end{align*}
+
+Then
+
+{\centering
+    $\frac{\partial y}{\partial x} = \frac{\partial y}{\partial u} \frac{\partial u}{\partial x}$
+
+}
+
+This principle can be used to compute the partial derivatives in an efficient
+and localised manner. Note that the transfer function must be differentiable
+(usually sigmoid or tanh, from before).
+
+Note:
+\begin{align*}
+    \text{if } & z(s) = \frac{1}{1 + e^{-s}}, & z^{\prime}(s) = z(1 - z)\\
+    \text{if } & z(s) = tanh(s),              & z^{\prime}(s) = 1 - z^2
+\end{align*}
+
+\section{Backpropagation}
+In conjunction with gradient descent, we use backpropagation (abbreviation for
+``backward propagation of errors''). We calculate the gradient of a loss
+function with respect to all the weights in the network.
+
+We have the following partial derivatives:
+
+\begin{align*}
+    \frac{\partial E}{\partial z} &= z - t\\
+    \frac{dz}{ds} &= g^{\prime}(s) = z(1 - z)\\
+    \frac{\partial s}{\partial y_1} &= v_1\\
+    \frac{dy_1}{du_1} &= y_1(1-y_1)
+\end{align*}
+
+We introduce the following useful notation:
+
+{\centering
+    $\delta_{out} = \frac{\partial E}{\partial s}$, $\delta_1 = \frac{\partial
+    E}{\partial u_1}$, $\delta_2 = \frac{\partial E}{\partial u_2}$
+
+}
+
+Combining these, we get:
+
+\begin{align*}
+    \delta_{out} &= (z - t)z(1 - z)\\
+    \frac{\partial E}{\partial v_1} &= \delta_{out}y_1\\
+    \delta_1 &= \delta_{out}v_1y_1(1-y_1)\\
+    \frac{\partial E}{\partial w_{11}} &= \delta_1x_1
+\end{align*}
+
+Partial derivatives can be calculated efficiently by backpropagating deltas
+through the network.
+
+\section{Applications of Neural Networks}
+Applications include
+\begin{itemize}
+    \item Autonomous driving (e.g. ALVINN)
+    \item Game playing
+    \item Credit card fraud detection
+    \item Handwriting recognition
+    \item Financial Prediction
+\end{itemize}
+
+\subsection{ALVINN}
+ALVINN is the Autonomous Land Vehicle In a Neural Network. It had a 30x32
+sensor, which fed into a neural network with 30 output units (ranging from
+``sharp left'' to ``straight ahead'' to ``sharp right''). Later versions
+included a sonar range finder, an 8.32 range finder input retina, with 29
+hidden input units and 45 output units.
+
+This is an example of supervised learning, from human actions (behavioural
+cloning), with additional ``transformed'' training items to cover emergency
+situations.
+
+With just this, ALVINN was able to drive autonomously from coast to coast.
+
+\section{Variations on backpropagation}
+\subsection{Cross Entropy}
+Problem: least squares error function is unsuitable for classification where
+target = 0 or 1
+
+Mathematical theory: maximum likelihood
+
+Solution: replace with cross entropy error function
+
+\subsubsection{Cross Entropy}
+For classification tasks, target $t$ is either 0 or 1, so better to use
+
+{\centering
+    $E = -t\log(z) - (1 - t)\log(1 - z)$
+
+}
+
+This can be justified mathematically, and works well in practice - especially
+when negative examples vastly outweigh positive ones. It also makes the
+backpropagation computations simpler: $\frac{\partial E}{\partial z} = \frac{z
+- t}{z(1 - z)}$
+
+if $z = \frac{1}{1 + e^{-s}}$, then $\frac{\partial E}{\partial s} =
+\frac{\partial E}{\partial z} \frac{\partial z}{\partial s} = z - t$.
+
+\subsubsection{Maximum Likelihood}
+$H$ is a class of hypotheses.
+
+$P(D|h) = $ probability of data $D$ being generated under hypothesis $h \in H$.
+
+$\log P(D|h)$ is called the likelihood.
+
+Machine Learning principle: choose $h \in H$ which maximizes the likelihood,
+i.e. maximizes $P(D|h)$, or maximizes $\log P(D|h)$.
+
+\subsubsection{Least Squares Method - Finding a Line of Best Fit}
+Suppose data generated by a linear function $h$, plus Gaussian noise with
+standard deviation $\sigma$.
+
+\begin{align*}
+    P(D|h) &= \prod_{i = 1}^m \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{1}{2\sigma^2 (d_i - h(x_u))^2}}\\
+    \log P(D|h) &= \sum_{i = 1}^m -\frac{1}{2\sigma^2} (d_i - h(x_i))^2 - \log(\sigma) - \frac{1}{2} \log(2\pi)\\
+    h_{ML} &= \text{argmax}_{h \in H} \log P(D|h)\\
+           &= \text{argmin}_{h \in H} \sum_{i = 1}^m (d_i - h(x_i))^2
+\end{align*}
+
+(Note: we do not need to know $\sigma$)
+
+\subsubsection{Derivation of Cross Entropy}
+For classification tasks, $d$ is either 0 or 1.
+
+Assume $D$ generated by hypothesis $h$ as follows:
+\begin{align*}
+    P(1 | h(x_i)) &= h(x_i)\\
+    P(0 | h(x_i)) &= (1-h(x_i))
+\end{align*}
+
+i.e. $P(d_i | h(x_i)) = h(x_i)^{d_i} (1 - h(x_i))^{1 - d_i}$
+
+then,
+\begin{align*}
+    \log P(D|h) &= \sum_{i = 1}^m d_i \log h(x_i) + (1 - d_i)\log (1-h(x_i))\\
+    h_{ML} &= \text{argmax}_{h \in H} \sum_{i = 1}^m d_i \log h(x_i) + (1 - d_i)\log (1 - h(x_i))
+\end{align*}
+
+This can be generalized to multiple classes.
+
+\subsubsection{Bayes' Rule}
+$H$ is a class of hypotheses.
+
+$P(D|h) = $ probability of data $D$ being generated under hypothesis $h \in H$
+
+$P(h|D) = $ probability that $h$ is correct, given that data $D$ were observed.
+
+Bayes' Theorem:
+\begin{align*}
+    P(h|D)P(D) &= P(D|h)P(h)\\
+    P(h|D) &= \frac{P(D|h)P(h)}{P(D)}
+\end{align*}
+
+$P(h)$ is called the \textbf{prior}.
+
+\paragraph{Example: Medical Diagnosis}
+Suppose we have a 98\% accurate test for a type of cancer which occurs in 1\%
+of patients. If a patient tests positive, what is the probability that they
+have the cancer?
+\begin{align*}
+    P(positive|cancer) = 0.98\\
+    P(cancer) = 0.01\\
+    P(cancer|positive) &= \frac{P(positive|cancer)P(cancer)}{P(positive)}\\
+                       &= \frac{0.98 \times 0.01}{0.98 \times 0.01 + P(\text{false positive}) \times 0.99}
+\end{align*}
+
+\subsection{Weight Decay}
+Problem: weights ``blow up'' and inhibit further learning
+
+Mathematical theory: Bayes' rule
+
+Solution: add weight decay term to error function
+
+Assume that small weights are more likely to occur than large weights, i.e.
+
+{\centering
+    $P(w) = \frac{1}{Z} e^{-\frac{\lambda}{2} \sum_j w_j^2}$
+
+}
+
+where Z is a normalizing constant. Then the cost function becomes:
+
+{\centering
+    $E = \frac{1}{2} \sum_i (z_i - t_i)^2 + \frac{\lambda}{2} \sum_j w_j^2$
+
+}
+
+This can prevent the weights from ``saturating'' to very high values.
+
+Problem: need to determine $\lambda$ from experience, or empirically.
+
+\subsection{Momentum}
+Problem: weights oscillate in a ``rain gutter''
+
+Solution: weighted average of gradient over time
+
+If landscape is shaped like a ``rain gutter'', weights will tend to oscillate
+without much improvement.
+
+Solution: add a momentum factor
+
+\begin{align*}
+    \delta w &\leftarrow \alpha\delta w + (1 - \alpha)\frac{\partial E}{\partial w}\\
+    w &\leftarrow w - \eta\delta w
+\end{align*}
+
+Hopefully, this will dampen sideways oscillations but amplify downhill motion
+by $\frac{1}{1 - \alpha}$.
+
+\section{Conjugate Gradients}
+Compute matrix of second derivatives $\frac{\partial^2 E}{\partial w_i \partial w_j}$
+(called the Hessian).
+
+Approximate the landscape with a quadratic function (parabaloid).
+
+Jump to the minimum of this quadratic function.
+
+\section{Natural Gradients (Amari, 1995)}
+Use methods from information geometry to find a ``natural'' re-scaling of the
+partial derivatives.
+
+\section{Training Tips}
+\begin{itemize}
+    \item Rescale inputs and outputs to be in the range 0 to 1 or -1 to 1
+    \item Initialize weights to very small random values
+    \item On-line or batch learning
+    \item Three different ways to prevent overfitting:
+        \begin{itemize}
+            \item limit the number of hidden nodes or connections
+            \item limit the training time, using a validation set
+            \item weight decay
+        \end{itemize}
+
+    \item Adjust learning rate and momentum to suit the particular task
+\end{itemize}
+
+\chapter{Temporal Difference Learning}
+Temporal difference learning is a prediction method. Mostly used to solve the
+reinforcement learning problem, TD learning is a combination of Monte Carlo
+ideas and dynamic programming ideas.
+
+\section{Backgammon}
+Imagine a backgammon neural network; we have 196 inputs, 20 hidden units, 1
+output unit in a two-layer neural network. The board encoding is 4 units
+$\times$ 2 player $\times$ 24 points, 2 units for the bar, and 2 units for off
+the board.
+
+The input $s$ is the encoded board postition (state), and the output $V(s)$ is
+the value of this position (the probability of winning).
+
+For backgammon play, we consider the following:
+
+Question: how do we play?
+
+Answer: at each move, roll the dice, find all possible ``next board
+positions'', convert them to the appropriate input format, feed them to the
+network, and choose the one which produces the largest output.
+
+Question: how do we train the network?
+
+Answer: by supervised learning (from expert preferences) or by temporal
+difference learning (from self-play).
+
+\section{Backpropagation}
+{\centering
+    $w \leftarrow w + \eta(T - V)\frac{\partial V}{\partial w}$
+
+}
+
+$V = $ actual output\\
+$T = $ target output\\
+$w = $ weight\\
+$\eta = $ learning rate.
+
+How do we choose $T$?
+\begin{itemize}
+    \item learn move from example games?
+    \item $T$ = final outcome of game?
+    \item Temporal Difference Learning (Sutton)
+\end{itemize}
+
+\section{Temporal Difference Learning}
+(current estimate) $V_k \rightarrow V_{k+1} \rightarrow ... \rightarrow V_m \rightarrow V_{m+1}$ (final result)
+
+$TD(0)$: use $V_{k+1}$ as the training value for $V_k$
+
+$TD(\lambda)$: use $T_k$ as the training value for $V_k$, where
+
+{\centering
+    $T_k = (1 - \lambda) \sum_{t = k + 1}^m \lambda^{t-1-k}V_t + \lambda^{m-k}V_{m+1}$
+
+}
+
+$T_k$ is a weighted average of future estimates, $\lambda = $ discount factor
+($0 \leq \lambda < 1$).
+
+TD-learning can be seen as an alternative to Q-learning, but it learns only a
+value function $V(s)$, rather than a Q-function $Q(s,a)$.
+
+\section{TD-Gammon}
+Question:Why is it better to learn from next postition instead of final outcome?
+
+Answer: If we learn from next position, we won't assign credit indiscriminately
+in the case where we go from a bad move, to a good move, to a win.
+
+Tesauro trained two networks: EP-network was trained on Expert Preferences.
+TD-network was trained by self play.
+
+TD-network outperformed the EP-network.
+
+With modifications such as 3-step lookahead and additional hand-crafted input
+features, TD-Gammon became the best Backgammon player in the world (Tesauro,
+1995).
+
+\section{General Ideas}
+Other games have been trained by TD-learning, but generally against humans
+rather than self-play.
+
+Evolutionary algorithms can also produce surprisingly strong players, but a
+gradient-based method such as TD-learning is better able to fine-tune the
+rarely used weights, and exploit the limited nonlinear capabilities of the
+neural network.
+
+A more recent algorithm called TreeStrap learns at all branches of the
+(alpha-beta) game tree. It can learn chesse to master-level play (but relies on
+knowing the ``world model'', i.e. the rules of the game).

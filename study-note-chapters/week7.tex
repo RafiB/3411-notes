@@ -1,0 +1,494 @@
+\part{Week 7}
+\chapter{Planning}
+
+\section{Planning Agents}
+A critical part of Artifical Intelligence is devising a plan of action to
+achieve one's goal.
+
+\subsection{Example: Planning as Single-Player Game in GDL}
+We have an initial state, say
+\begin{lstlisting}[morekeywords={init}]
+    init(have(cake))
+\end{lstlisting}
+
+and a goal, say
+\begin{lstlisting}[morekeywords={goal,true}]
+    goal(agent,100) $\Leftarrow$ true(have(cake)) $\land$ true(eaten(cake))
+\end{lstlisting}
+
+Actions can be defined as follows:
+\begin{lstlisting}[morekeywords={legal,true}]
+    legal(agent,eat(cake)) $\Leftarrow$ true(have(cake))
+    legal(agent,bake(cake)) $\Leftarrow$ $\neg$true(have(cake))
+\end{lstlisting}
+
+And effects can be similarly defined:
+\begin{lstlisting}[morekeywords={next,does,true}]
+    next(eaten(cake)) $\Leftarrow$ does(agent,eat(cake))
+    next(eaten(cake)) $\Leftarrow$ true(eaten(cake))
+    next(have(cake)) $\Leftarrow$ does(agent,bake(cake))
+    next(have(cake)) $\Leftarrow$ true(have(cake)) $\land$ $\neg$does(agent,eat(cake))
+\end{lstlisting}
+
+\subsubsection{A Special-Purpose Planning Domain Definition Language (PDDL)}
+\begin{lstlisting}[morekeywords={Init,Goal,Action}]
+Init(conjunction of atomic sentences without variables)
+Goal(conjunction of literals)
+Action(Name(parameters),
+    PRECOND: conjunction of literals,
+    EFFECT:  conjunction of literals)
+\end{lstlisting}
+
+For example,
+\begin{lstlisting}[morekeywords={Init,Goal,Action}]
+Init(have(cake))
+Goal(have(cake)$\land$eaten(cake))
+Action(eat(C),
+    PRECOND: have(C),
+    EFFECT:  $\neg$have(C) $\land$ eaten(C))
+Action(bake(C),
+    PRECOND: $\neg$have(C),
+    EFFECT:  have(C))
+\end{lstlisting}
+
+\subsection{Example: Blocks World Planning}
+TODO insert image here. Slide 6, Planning.
+
+A robot arm can pick up a block and hmove it to another position. The arm can
+only pick up one block at a time.
+
+\subsubsection{Describing in PDDL}
+\begin{lstlisting}[morekeywords={Init,Goal,Action}]
+Init(on(a,table) $\land$ on(b,table) $\land$ on(c,a) $\land$ clear(b) $\land$ clear(c))
+
+Goal(on(a,b) $\land$ on(b,c))
+
+Action(move(B,X,Y),
+    PRECOND: on(B,X) $\land$ clear(B) $\land$ clear(Y) $\land$ X $\neq$ Y,
+    EFFECT:  on(B,Y) $\land$ clear(X) $\land$ $\neg$on(B,X) $\land$ $\neg$clear(Y))
+
+Action(moveToTable(B,X),
+    PRECOND: on(B,X) $\land$ clear(B),
+    EFFECT:  on(B,table) $\land$ clear(X) $\land$ $\neg$on(B,X))
+
+\section{Planning as State-Based Search}
+A state space is some collection of states with actions that lead to other
+states. The state space includes an Inital State and states that satisfy the
+goal.
+
+TODO insert image, slide 9, Planning.
+
+\subsection{Example: State Space for Have-The-Cake-And-Eat-It-Too}
+TODO insert image, slide 10, Planning.
+
+\subsection{Example: State Space for Blocksworld}
+\begin{lstlisting}[morekeywords={Action}]
+Action(move(B,X,Y),
+    PRECOND: on(B,X) $\land$ clear(B) $\land$ clear(Y) $\land$ B$\neq$Y $\land$ X$\neq$Y,
+    EFFECT:  on(B,Y) $\land$ clear(Y) $\land$ $\neg$on(B,X) $\land$ $\neg$clear(Y))
+Action(moveToTable(B,X),
+    PRECOND: on(B,X) $\land$ clear(B),
+    EFFECT:  on(B,table) $\land$ clear(X) $\land$ $\neg$on(B,X))
+\end{lstlisting}
+
+TODO what is going on with Forward/Backward/Bidirectional Search on slides
+12,13,14?
+
+\section{Partial-Order Planning}
+Partial-Order Plans (POPs) give us a general idea of the order that steps must be
+performed in, but not a strict order. Let us consider the following:
+
+TODO insert image from slide 16, Planning.
+
+To reach our goal state, we must:
+\begin{enumerate}
+    \item Move peg from 4,1 to 4,3, taking the peg in 4,2
+    \item Move peg from 4,3 to 4,5, taking the peg in 4,4
+\end{enumerate}
+\begin{enumerate}
+    \item Move peg from 9,5 to 7,5, taking the peg in 8,5
+    \item Move peg from 7,5 to 5,5, taking the peg in 6,5
+\end{enumerate}
+And finally, move peg from 4,5 to 6,5, taking the peg in 5,5.
+
+This partial-order plan represents 6 sequential plans, as the only condition is
+that the `2' moves must be performed after the `1' moves, and the final move
+must be performed after all other moves.
+
+\begin{lstlisting}
+Right(41), Right(43), Up(95), Up(75), Down(45)
+Right(41), Up(95), Right(43), Up(75), Down(45)
+Right(41), Up(95), Up(75), Right(43), Down(45)
+Up(95), Right(41), Right(43), Up(75), Down(45)
+Up(95), Right(41), Up(75), Right(43), Down(45)
+Up(95), Up(75), Right(41), Right(43), Down(45)
+\end{lstlisting}
+
+\subsection{Plan-Based Search}
+In the below image, each node is a plan.
+
+TODO insert image from slide 18, Planning.
+
+\subsection{Partial-Order Planning as a Search Problem}
+Search nodes are (mostly unfinished) partial-order plans. The inital plan
+contains only the Start and Finish actions. We define the EFFECT of Start as
+the inital state of the planning problem, and the PRECOND of Finish as the goal
+of the planning problem.
+
+Plans have 4 components:
+\begin{enumerate}
+    \item A set of actions (steps of the plan)
+    \item A set of ordering constraints $A < B$ (A before B)
+    \item A set of \textbf{causal links} A $\xrightarrow{p}$ B (``action A
+        achieves p for action B'')
+    \item A set of open preconditions
+\end{enumerate}
+
+An action C \textbf{conflicts} with a causal link A $\xrightarrow{p}$ B if C
+has the effect $\neg$p and C could come after A and before B.
+
+A plan with no conflicts and no open preconditions is a \textbf{solution}.
+
+\subsubsection{Example: Partial-Order Planning for Have-The-Cake-And-Eat-It-Too}
+Our inital plan has just ``Start'' and ``Finish''. We add a causal link, to
+obtain:
+Start $\xrightarrow{have(cake)}$ Finish
+
+We then add our action, eat(cake).
+Now we have eat(cake) causing a conflict for the causal link from Start to
+Finish: as eat(cake) $\xrightarrow{eaten(cake)}$ Finish, eat(cake) has the
+effect $\neg$have(cake).
+
+In other words:
+\begin{lstlisting}[morekeywords={Init,Goal,Action}]
+Init(have(cake))
+Goal(have(cake) $\land$ eaten(cake))
+Action(eat(C),
+    PRECOND: have(C),
+    EFFECT:  $\neg$have(C) $\land$ eaten(C))
+\end{lstlisting}
+
+\paragraph{Solution: Plan Without Conflict or Open Precondition}
+TODO insert image from slide 21, Planning.
+
+\begin{lstlisting}[morekeywords={Init,Goal,Action}]
+Init(have(cake))
+Goal(have(cake) $\land$ eaten(cake))
+Action(eat(C),
+    PRECOND: have(C),
+    EFFECT:  $\neg$have(C) $\land$ eaten(C))
+Action(bake(C),
+    PRECOND: $\neg$have(C),
+    EFFECT:  have(C))
+\end{lstlisting}
+
+\subsection{Algorithm for Solving POPs}
+The initial plan contains $Start$ and $Finish$, the ordering constraint $Start
+< Finish$, and no causal links. All preconditions of $Finish$ are open.
+
+We repeat the following:
+\begin{enumerate}
+    \item Pick an open precondition p (of an action B in the plan)
+    \item Pick an action A with effect p
+    \item Add the causal link A $\xrightarrow{p}$ B and the ordering constraint
+        A<B (if A is new to the plan and $Start<A$ and $A<Finish$)
+    \item If a conflict arises between the causal link A $\xrightarrow{p}$ B
+        and an action C: add either $B<C$ or $C<A$ if consistent with the
+        existing ordering.
+\end{enumerate}
+
+Retry (with different choices) if conflict cannot be resolved.
+
+Stop if a solution is found.
+
+\subsection{Example: Spare Tire Problem}
+\begin{lstlisting}[morekeywords={Init,Goal,Action}]
+Init(at(flat,axle) $\land$ at(spare,trunk))
+Goal(at(spare,axle))
+Action(remove(Obj,Loc),
+    PRECOND: at(Obj,Loc),
+    EFFECT:  $\neg$at(Obj,Loc) $\land$ at(Obj,ground))
+Action(putOn(T,axle),
+    PRECOND: at(T,ground) $\land$ $\neg$at(flat,axle),
+    EFFECT:  $\neg$at(T,ground) $\land$ at(T,axle))
+\end{lstlisting}
+
+\subsubsection{Solving the Spare Tire Problem with POP Planning}
+TODO insert images from slides 24, 25 Planning.
+
+\section{Planning with Propositional Logic}
+\subsection{Encoding Planning Problems in Propositional Logic}
+Planning can be done by testing the \textbf{satisfiability} of a logical
+sentence
+\begin{lstlisting}
+initial-state$^0 \land$ transition$^0 \land ... \land$ transition$^{max-1} \land$ goal$^{max}$
+\end{lstlisting}
+
+A sentence transition$^t$ contains propositions A$^t$ for every potential
+occurrence of an action. A model will assign $true$ to A$^t$ iff doing action A
+at time $t \in \{0,...,max-1\}$ is part of a correct plan. For example,
+movetoTable(c,a)$^0=true$, move(b,table,c)$^1=true$, ...
+
+Planners based on satisfiability can handle large planning problems.
+
+\subsubsection{Example: Propositional Logic for Have-The-Cake-And-Eat-It-Too}
+\begin{lstlisting}
+Initial and goal state:
+have-cake$^0 \land$
+have-cake$^2 \land$ eaten-cake$^2 \land$
+
+Action preconditions:
+(eat-cake$^0 \Rightarrow$ have-cake$^0$) $\land$
+(eat-cake$^1 \Rightarrow$ have-cake$^1$) $\land$
+(bake-cake$^0 \Rightarrow$ $\neg$have-cake$^0$) $\land$
+(bake-cake$^1 \Rightarrow$ $\neg$have-cake$^1$) $\land$
+
+Transitions (F$^{t+1} \Leftrightarrow$ ActionCausesF$^t \lor$ (F$^t \land \neg$ActionCausesNotF$^t$)
+(have-cake$^1 \Leftrightarrow$ bake-cake$^0 \lor$ (have-cake$^0 \land \neg$eat-cake$^0$)) $\land$
+(have-cake$^2 \Leftrightarrow$ bake-cake$^1 \lor$ (have-cake$^1 \land \neg$eat-cake$^1$)) $\land$
+(eaten-cake$^1 \Leftrightarrow$ eat-cake$^0 \lor$ eaten-cake$^0$) $\land$
+(eaten-cake$^2 \Leftrightarrow$ eat-cake$^1 \lor$ eaten-cake$^1$)
+\end{lstlisting}
+
+\paragraph{Solution: A model that satisfies the formula}
+\begin{lstlisting}
+have-cake$^0=true$,
+eaten-cake$^0=false$,
+eat-cake$^0=true$,
+bake-cake$^0=false$,
+
+have-cake$^1=false$,
+eaten-cake$^1=true$,
+eat-cake$^1=false$,
+bake-cake$^1=true$,
+
+have-cake$^2=true$,
+eaten-cake$^2=true$
+\end{lstlisting}
+
+\subsubsection{Example: Blocks World Planning as Satisfiability}
+The initial state is represented as such:
+\begin{lstlisting}
+on(a,table)$^0 \land$ on(b,table)$^0 \land$ on(c,a)$^0 \land$ clear(b)$^0 \land$ clear(c)$^0$
+\end{lstlisting}
+
+And the goal is encoded as follows:
+\begin{lstlisting}
+on(a,b)$^{max} \land$ on(b,c)$^{max}$
+\end{lstlisting}
+
+The action preconditions:
+\begin{lstlisting}
+move(B,X,Y)$^t \Rightarrow$ on(B,X)$^t \land$ clear(B)$^t \land$ clear(Y)$^t$
+moveToTable(B,X)$^t \Rightarrow$ on(B,X)$^t \land$ clear(B)$^t$
+    ($\forall$ B,X,Y $\in$ {a,b,c,table}, t $\in$ {0,1,2,...,$max$-1}, B$\neq$Y, X$\neq$Y)
+\end{lstlisting}
+
+Constraints: actions can't be executed in parallel
+\begin{lstlisting}
+$\neg$(move(B,X,Y)$^t \land$ moveToTable(C,Z)$^t$)
+$\neg$(moveToTable(B,X)$^t \land$ moveToTable(B$^\prime$,X$^\prime$)$^t$)
+$\neg$(move(B,X,Y)$^t \land$ move(B$^\prime$,X$^\prime$,Y$^\prime$)$^t$)
+    ($\forall$ B,B$^\prime$,C,X,X$^\prime$,Y,Y$^\prime$,Z $\in$ {a,b,c,table},
+     t $\in$ {0,1,2,...,$max$-1}, B $\neq$ B$^\prime$, ...)
+\end{lstlisting}
+
+Encoding transitions:
+\begin{lstlisting}
+on(B,X)$^{t+1} \Leftrightarrow$ move(B,Y,X)$^t \lor$
+            (moveToTable(B,Y)$^t \land$ X=table) $\lor$
+            (on(B,X)$^t \land \neg$move(B,X,Y)$^t \land \neg$moveToTable(B,X)$^t$)
+
+clear(B)$^{t+1} \Leftrightarrow$ move(X,B,Y)$^t \lor$
+             moveToTable(X,B)$^t \lor$
+             (clear(B)$^t \land \neg$move(X,Y,B)$^t$)
+
+    ($\forall$ B,X,Y $\in$ {a,b,c,table}, t $\in$ {0,1,2,...,$max$-1},
+     B $\neq$ X, B $\neq$ Y, X $\neq$ Y)
+\end{lstlisting}
+
+For $max=3$ there is 1 model that satisfies all sentences. The propositions
+that are true in this model include:
+\begin{lstlisting}
+moveToTable(c,a)$^0$, move(b,table,c)$^1$, move(a,table,b)$^2$
+\end{lstlisting}
+
+\chapter{General Game Playing}
+\section{Blind General Game Playing}
+\subsection{Monte-Carlo Tree Search: The Idea}
+Monte-Carlo Tree Search (MCTS) tries to analyse the most promising moves based
+on the expansion of the game tree on random sampling of the search space. MCTS
+is based on playouts: games are played out to the very end, selecting moves at
+random. The final result is used to weight the nodes in the game tree so that
+better nodes are more likely to be chosen in future playouts.
+
+Doing this should allow expanding nodes in the game tree so that fewer nodes
+are examined, but game play is not significantly negatively effected - all
+while reducing the amount of space expanded.
+
+TODO insert image from slide 4, General Game Playing.
+
+\subsection{MCTS: How it Works}
+The value of a move = average score returned by simulation
+
+TODO insert image from slide 5, General Game Playing
+
+\subsection{Improvement: Confidence Bounds}
+Play one random game for each move
+
+For the next simulation choose move $i$ with
+
+$argmax_i (v_i + C \times \sqrt{\frac{\log n}{n_i}})$, where $\sqrt{\frac{\log
+n}{n_i}}$ is the confidence bound.
+Here,
+\begin{description}
+    \item[$i$] move
+    \item[$v_i$] average result for $i$
+    \item[$n_i$] number of sample runs for $i$
+    \item[$n$] number of sample runs
+    \item[$C$] a constant
+\end{description}
+
+\subsection{Assessment}
+Upper Confidence Bound Monte-Carlo Tree Search (UCT) works well for games that
+
+\begin{itemize}
+    \item \textbf{converge} to the goal (e.g. Othello)
+    \item have a large branching factor (e.g. Amazons)
+    \item do not have good/perfect heuristics (e.g. Ultimate Tic Tac Toe)
+\end{itemize}
+
+\section{Informed General Game Playing}
+\subsection{Recognising structures}
+\subsubsection{Informed Search: Exploiting Symmetries}
+Symmetries can be logically derived from the rules of a game.
+
+A \textbf{symmetry relation} over the elements of a domain is an equivalence
+relation such that
+\begin{itemize}
+    \item two symmetric states are either both terminal or non-terminal
+    \item if they are terminal, they have the same goal value
+    \item if they are non-terminal, the legal moves in each of them are
+        symmetric and yield symmetric states.
+\end{itemize}
+
+You can have reflectional symmetry (for example, in Connect 3)
+
+TODO insert image from slide 12, GGP
+
+You can have rotational symmetry (for example, in Capture Go)
+
+TODO insert image from slide 13, GGP
+
+\subsubsection{Informed Search: Factoring}
+Take the game ``hodepodge'', a combination of chess and othello. If the
+branching factor of chess is $a$ and the branching factor of Othello is $b$,
+the branching factor as given to players is $ab$. The fringe of the tree at
+depth $n$ is given by $(ab)^n$ or, factored, $a^n + b^n$.
+
+TODO what the hell is happening on slide 15 of GGP?
+
+\paragraph{Game Factoring and its Use}
+\begin{enumerate}
+    \item Compute factors
+        \begin{itemize}
+            \item Behavioural factoring
+            \item Goal factoring
+        \end{itemize}
+    \item Play factors
+    \item Reassemble solution
+        \begin{itemize}
+            \item Append plans
+            \item Interleave plans
+            \item Parallelise plans with simultaneous actions
+        \end{itemize}
+\end{enumerate}
+
+\subsection{Discovering heuristics}
+Blind search: only assign scores to nodes based on the evalutanio of the
+complete subtrees at those nodes
+
+Problem: can relatively rarely see all the way to the bottom of a tree for a
+single node, even less so for every successor node
+
+Solution: improve efficiency of inference
+
+Solution: assign intermediate scores to nodes based on an \textbf{evaluation
+function}.
+
+\subsubsection{Evaluation Functions}
+Typically designed by programmers and humans, a great deal of thought and
+empirical testing goes into choosing good functions. (for example, piece count
+and piece values in Chess, or holding corners in Othello).
+
+This requires knowledge of the game's structure, semantics, play order, etc.
+
+In the general case, we have no knowledge of features, no insight into the game
+structure, and no intuition about what is a good feature for a game. Some
+general ideas work in many cases, but sometimes they don't.
+
+\paragraph{Example: the ``mobility'' heuristics}
+\subparagraph{Mobility}
+``More moves means better state''. Optionally, you can include ``limiting
+opponent moves is preferable''.
+
+This is good because in many games, being cornered and forced into making a
+move is bad (Chess, Othello).
+
+This can be bad when mobility is counterproductive, e.g. in Checkers.
+
+\subparagraph{Inverse Mobility} Sometimes, having fewer things to do is
+preferable (or, optionally, giving the opponent things to do is better).
+
+This works in games like nothello (Suicide Othello), where you want to lose
+pieces.
+
+We still have the problem of how to decide between mobility and inverse
+mobility.
+
+\subsubsection{Generating Evaluation Functions: Goal Distance}
+The better an intermediate state satisfies the goal specification, the better
+it is.
+
+We use \textbf{Fuzzy Logic} to evaluate the ``degree of truth'' of a goal
+formula.
+
+True literals take the value $0.5 < p < 1.0$, and false literals take $1-p$.
+
+For example: take $p = 0.9$.
+\begin{lstlisting}
+A = true    B = true    C = false
+$\Rightarrow$ fuzzy_eval(A $\land \neg$B $\land$ C) = (0.9)(1-0.9)(0.1) = 0.009
+
+A = false   B = false   C = true
+$\Rightarrow$ fuzzy_eval(A $\land \neg$B $\land$ C) = (0.1)(1-0.1)(0.9) = 0.081
+$\Rightarrow$ fuzzy_eval(A $\lor \neg$B $\lor$ C) = 1 - fuzzy_eval($\neg$A $\land$ B $\land \neg$C) = 0.991
+\end{lstlisting}
+
+\subsubsection{Example: Noughts and Crosses}
+\begin{lstlisting}
+goal(xplayer, 100) $\Leftarrow$ true(cell(M,1,x)) $\land$
+                      true(cell(M,2,x)) $\land$
+                      true(cell(M,3,x))
+                      $\lor$
+                      true(cell(1,N,X)) $\land$
+                      true(cell(2,N,X)) $\land$
+                      true(cell(3,N,X))
+                      $\lor$
+                      true(cell(1,1,x)) $\land$
+                      true(cell(2,2,x)) $\land$
+                      true(cell(3,3,x))
+                      $\lor$
+                      true(cell(1,3,x)) $\land$
+                      true(cell(2,2,x)) $\land$
+                      true(cell(3,1,x))
+\end{lstlisting}
+
+\paragraph{Evaluation of Intermediate States}
+TODO insert image from slide 26, GGP
+
+\begin{lstlisting}
+fuzzy_eval(goal(xplayer,100)) after does(xplayer,mark(2,2))
+> fuzzy_eval(goal(xplayer,100)) after does(xplayer,mark(1,1))
+> fuzzy_eval(goal(xplayer,100)) after does(xplayer,mark(1,2))
+\end{lstlisting}
