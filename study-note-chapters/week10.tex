@@ -1,2 +1,320 @@
 \part{Week 10}
 \chapter{Uncertainty}
+Let action $A_t$ = leave for airport $t$ minutes before flight. Will $A_t$ get
+me there on time? Problems:
+
+\begin{itemize}
+    \item partial observability, noisy sensors
+    \item uncertainty in action outcomes (flat tire, etc.)
+    \item immense complexity of modelling and predicting traffic
+\end{itemize}
+
+Hence a purely logical appreach either
+
+\begin{enumerate}
+    \item risks falsehood: "$A_{25}$ will get me there on time"
+    \item leads to conclusions that are too weak for decision making: "$A_{25}$
+        will get me there on time if there's no accident on the bridge and it
+        doesn't rain and my tires remain intact", or "$A_{1440}$ might be safe
+        but I'd have to stay overnight in the airport", ...
+\end{enumerate}
+
+\subsection{Methods for handling uncertainty}
+Default or nonmonotonic logic:\\
+Assume my car does not have a flat tire, etc.\\
+Assume $A_{25}$ works unless contradicted by evidence\\
+Issues: what assumptions are reasonable? How to handle contradiction?
+
+Probability:\\
+Given the available evidence, $A_{25}$ will get me there on time with
+probability 0.04 (Mahaviracarya (9th C.), Cardamo (1561) theory of gambling)
+
+\section{Probability}
+Probabilistic assertions summarize effects of:
+
+\begin{itemize}
+    \item Laziness: failure to enumerate exceptions, qualifications, etc.
+    \item Ignorance: lack of relevant facts, initial conditions, etc.
+\end{itemize}
+
+Subjective or Bayesian probability:
+
+Probabilities relate propositions to one's own state of knowledge. e.g.
+$P(A_{25}|no reported accidents) = 0.06$.
+
+These are not claims of a ``probabilistic tendency'' in the current situation
+(but might be learned from past experience of similar situations)
+
+Probabilities of propositions change with new evidence: e.g. $P(A_{25}|no
+reported accidents, 5 a.m.) = 0.15$
+
+This is analogous to logical entailment status KB $\models \alpha$, not
+absolute truth.
+
+\subsection{Making decisions under uncertainty}
+Suppose I believe the following:
+
+\begin{align*}
+    P(A_{25} \text{gets me there on time}|...) &= 0.04\\
+    P(A_{90} \text{gets me there on time}|...) &= 0.70\\
+    P(A_{120} \text{gets me there on time}|...) &= 0.95\\
+    P(A_{1440} \text{gets me there on time}|...) &= 0.9999
+\end{align*}
+
+Choosing an action depends on my preferences for missing flight vs. airport
+cuisine, etc.
+
+Utility theory is used to represent and infer preferences.
+
+Decision theory = utility theory + probability theory
+
+\subsection{Probability basics}
+Begin with a sample set $\Omega$ - the sample space (e.g. 6 possible roles of a
+die). $\omega \in \Omega$ is a sample point/possible world/atomic event
+
+A probability space or probability model is a sample space with an assignment
+$P(\omega)$ for every $\omega \in \Omega$ such that $0 \leq P(\omega) \leq 1$
+and $\sum_{\omega} P(\omega) = 1$, e.g. $P(1) = P(2) = P(3) = P(4) = P(5) =
+P(6) = \frac{1}{6}$.
+
+An event $A$ is any subset of $\Omega$. $P(A) = \sum_{\{\omega \in A\}}
+P(\omega)$
+
+e.g. $P($die roll$ < 4) = P(1) + P(2) + P(3) = \frac{1}{6} + \frac{1}{6} +
+\frac{1}{6} = \frac{1}{2}$
+
+\subsection{Random variables}
+A random variable is a function from sample points to some range (e.g.
+the Reals or Booleans). For example, $Odd(3) = true$.
+
+$P$ induces a probability distribution for any random variable $X$:
+
+{\centering
+    $P(X = x_i) = \sum_{\{\omega : X(\omega) = x_i\}} P(\omega)$
+
+}
+
+e.g. $P(odd = true) = P(1) + P(3) + P(5) = \frac{1}{6} + \frac{1}{6} +
+\frac{1}{6} = \frac{1}{2}$
+
+\subsection{Propositions}
+Think of a proposition as the event (set of sample points) where the
+proposition is true.
+
+Given Boolean random variables $A$ and $B$:\\
+event $a = $ set of sample points where $A(\omega)$ = true\\
+event $\neg a = $ set of sample points where $A(\omega)$ = false\\
+event $a \land b = $ points where $A(\omega)$ = true and $B(\omega)$ = true
+
+With Boolean variables, sample point = propositional logic model, e.g. A =
+true, B = false or $A \land \neg b$.
+
+Proposition = disjunction of atomic events in which it is true, e.g. $(a \lor
+b) \equiv (\neg a \land b) \lor (a \land \neg b) \lor (a \land b) \rightarrow
+P(a \lor b) = P(\neg a \land b) + P(a \land \neg b) + P(a \land b)$
+
+\subsection{Why use probability?}
+The definitions imply that certain logically related events must have related
+probabilities. For example, $P(a \lor b) = P(a) + P(b) - P(a \land b)$
+
+de Finetti (1931): an agent who bets according to probabilities that violate
+these axioms can be forced to bet so as to lose money regardless of outcome.
+
+\subsubsection{Syntax for propositions}
+Propositional or Boolean random variables, e.g. Cavity (do I have a cavity?).
+\verb|Cavity = true| is a proposition, also written \verb|Cavity|
+
+Discrete random variables (finite or infinite), e.g. Weather is one of $\langle
+sunny, rain, cloudy, snow\rangle$. \verb|Weather = rain| is a proposition.
+Values must be exhaustive and mutually exclusive. Continuous random variables
+(bounded or unbounded), e.g. \verb|Temp = 21.6|; also allow, e.g.
+\verb|Temp = 22.0|
+
+Arbitrary Boolean combinations of basic propositions.
+
+\subsubsection{Prior probability}
+Prior or unconditional probabilities of propositions
+
+e.g. $P(Cavity = true) = 0.1$ and $P(Weather = sunny) = 0.72$ correspond to
+belief prior to arrival of any (new) evidence.
+
+Probability distribution gives values for all possible assignments: $P(Weather)
+= \langle 0.72, 0.1, 0.08, 0.1 \rangle$ (normalized, i.e. sums to 1)
+
+\subsubsection{Joint probability}
+Joint probability distribution for a set of random variabls gives the
+probability of every atomic event on those random variables (i.e. every sample
+point)
+
+$P(Weather,Cavity)$ is a 4 $\times$ 2 matrix of values:
+\begin{tabular}{l | l l l l}
+    Weather =      & sunny & rain & cloudy & snow\\ \hline
+    Cavity = true  & 0.144 & 0.02 & 0.016  & 0.02\\
+    Cavity = false & 0.576 & 0.08 & 0.064  & 0.08
+\end{tabular}
+
+Every question about a domain can be answered by the joint distribution because
+every event in a sum of sample points.
+
+\subsubsection{Probability for continuous variables}
+Express distribution as a parametrized function. e.g. $P(X = x) = U[18,26](x) =
+$ uniform density between 18 and 26.
+
+Here, $P$ is a density; integrates to 1.
+
+$P(X = 20.5) = 0.125$ really means \[ \lim_{dx \rightarrow 0} P(20.5 \leq X
+\leq 20.5 + dx)/dx = 0.125 \]
+
+\subsubsection{Gaussian density}
+$P(x) = \frac{1}{\sqrt{2\pi\sigma}} e^{-(x-\mu)^2 / 2\sigma^2}$
+
+\subsubsection{Conditional probability}
+Conditional or posterior probabilities, e.g. $P(cavity|toothache) = 0.8$
+
+Notation for conditional distributions: $P(Cavity|Toothache) = $ 2-element
+vector of 2-elemnt vectors
+
+If we know more, e.g. cavity is also given, then we have
+$P(cavity|toothache,cavity) = 1$
+
+Note: the less specific belief remains valid after more evidence arrives, but
+it is not always useful.
+
+New evidence may be irrelevant, allowing for simplification, e.g.
+
+$P(cavity|toothache,49ersWin) = P(cavity|toothache) = 0.8$
+
+This kind of inference, sanctioned by domain knowledge, is crucial.
+
+Definition of conditional probability: $P(a|b) = \frac{P(a \land b)}{P(b)}$ if
+$P(b) \neq 0$
+
+Alternative formulation: $P(a \land b) = P(a|b)P(b) = P(b|a)P(a)$
+
+A general version holds for whole distributions, e.g. $P(Weather,Cavity) =
+P(Weather|Cavity)P(Cavity)$ (view as a 4 $\times$ 2 set of equations, not
+matrix multiplication)
+
+Chain rule is derived by successive application of product rule:
+
+\begin{align*}
+    P(X_1,...,X_n) &= P(X_1,...X_{n-1})P(X_n|X_1,...,X_{n-1})
+                   &= P(X_1,...,X_{n-2})P(X_{n-1}|X_1,...,X_{n-2})P(X_n|X_1,...,X_{n-1})
+    &= ... = \prod_{i = 1}^n P(X_i|X_1,...,X_{i-1})
+\end{align*}
+
+\section{Inference by enumeration}
+Start with the joint distribution:
+
+TODO insert table image from slide 17, Uncertainty.
+
+For any proposition $\phi$, sum the atomic events where it is true:
+
+{\centering
+    $P(\phi) = \sum_{\omega:\omega\models\phi} P(\omega)$
+
+}
+
+$P(toothache) = 0.108 + 0.012 + 0.016 + 0.064 = 0.2$
+
+$P(cavity \lor toothache) = 0.108 + 0.012 + 0.072 + 0.008 + 0.016 + 0.064 =
+0.28$
+
+\begin{align*}
+    P(\neg cavity | toothache) &= \frac{P(\neg cavity \land toothache)}{P(toothache)}\\
+                               &= \frac{0.016 + 0.064}{0.108 + 0.012 + 0.016 + 0.064} = 0.4
+\end{align*}
+
+\subsection{Normalization}
+Denominator can be viewed as a normalization constant $\alpha$
+
+\begin{align*}
+    P(cavity|toothache) \alpha P(cavity,toothache)\\
+    &= \alpha[P(cavity,toothache,catch) + P(cavity,toothache,\neg catch)]\\
+    &= \alpha[\langle 0.108, 0.016 \rangle + \langle 0.012, 0.064 \rangle]\\
+    &= \alpha\langle 0.12, 0.08\rangle\\
+    &= \langle 0.6, 0.4 \rangle
+\end{align*}
+
+General idea: compute distribution on query variable by fixing evidence
+variables and summing over hidden variables.
+
+\section{Independence}
+$A$ and $B$ are independent iff $P(A|B) = P(A)$ or $P(B|A) = P(B)$ or $P(A,B) =
+P(A)P(B)$.
+
+$P(Toothache,Catch,Cavity,Weather) = P(Toothache,Catch,Cavity)P(Weather)$
+
+32 entries reduced to 12; for $n$ independent biased coins, $2^n \rightarrow n$
+
+Absolute independence powerful but rare.
+
+Dentistry is a large field with hundreds of variables, none of which are
+independent. What to do?
+
+\subsection{Conditional independence}
+$P(Toothache,Cavity,Catch)$ has $2^3 - 1 = 7$ independent entries
+
+If I have a cavity, the probability that the probe catches in it doesn't depend
+on whether I have a toothache:
+
+$P(Catch|Toothache,cavity) = P(Catch|cavity)$
+
+The same independence holds if I haven't got a cavity:
+
+$P(Catch|Toothache,\neg cavity) = P(Catch|\neg cavity)$
+
+\verb|Catch| is conditionally independent of \verb|Toothache| given
+\verb|Cavity|:
+
+$P(Catch|Toothache,Cavity) = P(Catch|Cavity)$
+
+Equivalent statements: $P(Toothache|Catch,Cavity) = P(Toothache|Cavity)$
+
+$P(Toothache,Catch|Cavity) = P(Toothache|Cavity)P(Catch|Cavity)$
+
+Write out full joint distribution using chain rule:
+
+\begin{align*}
+    P(Toothache,Catch,Cavity) &= P(Toothache|Catch,Cavity)P(Catch,Cavity)\\
+                              &= P(Toothache|Catch,Cavity)P(Catch|Cavity)P(Cavity)\\
+                              &= P(Toothache|Cavity)P(Catch|Cavity)P(Cavity)
+\end{align*}
+
+i.e. $2 + 2 + 1 = 5$ independent numbers (equations 1 and 2 remove 2)
+
+In most cases, the use of conditional independence reduces the size of the
+representation of the joint distribution from exponential in $n$ to linear in
+$n$.
+
+Conditional independence is our most basic and robust form of knowledge about
+uncertain environments.
+
+\subsection{Bayes' Rule}
+Product rule $P(a \land b) = P(a|b)P(b) = P(b|a)P(a)$ gives Bayes' rule,
+$P(a|b) = \frac{P(b|a)P(a)}{P(b)}$
+
+Useful for assessing diagnostic probability from causal probability:
+
+$P(Cause|Effect) = \frac{P(Effect|Cause)P(Cause)}{P(Effect)}$
+
+e.g. let $M$ be meningitis, $S$ be stiff neck:
+
+$P(m|s) = \frac{P(s|m)P(m)}{P(s)} = \frac{0.8 $\times$ 0.0001}{0.1} = 0.0008$
+
+Note: posterior probability of meningitis is still very small
+
+\subsubsection{Bayes' Rule and conditional independence}
+\begin{align*}
+    P(Cavity|Toothache \land Catch) &= \alpha P(Toothache \land Catch | Cavity)P(Cavity)\\
+                                    &= \alpha P(Toothache|Cavity)P(Catch|Cavity)P(Cavity)
+\end{align*}
+
+This is an example of a naive Bayes model: $P(Cause,Effect_1,...,Effect_n) =
+P(Cause) \prod_i P(Effect_i | Cause)$
+
+TODO insert image from slide 26, Uncertainty.
+
+Total number of parameters is linear in $n$.
+
+TODO euch, the stuff after Wumpus World makes me want.. to.. not do it. :P
